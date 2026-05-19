@@ -15,7 +15,6 @@ import {
 import { useEffect, useState } from "react";
 import {
   buyerProfiles,
-  blogPosts,
   clientLogos,
   comparisonRows,
   footerGroups,
@@ -107,7 +106,7 @@ function Header() {
         </nav>
         <div className="header-actions">
           <ButtonLink href="#contact" variant="outline">
-            Agendar demo
+            Cotizar
           </ButtonLink>
           <button
             className="menu-toggle"
@@ -136,7 +135,7 @@ function Header() {
               </a>
             ))}
             <ButtonLink href="#contact" variant="orange">
-              Agendar demo
+              Cotizar
             </ButtonLink>
           </motion.nav>
         ) : null}
@@ -172,17 +171,17 @@ function Hero() {
     <section className="hero section" id="home">
       <div className="hero-grid shell">
         <Reveal className="hero-copy">
-          <SectionEyebrow>IA para materiales de construccion</SectionEyebrow>
+          <SectionEyebrow>Acero a medida para construcción</SectionEyebrow>
           <h1>
-            <span className="hero-line">IA para cotizar</span>
-            <span className="hero-line">materiales</span>
-            <span className="hero-line hero-line--accent">en minutos</span>
+            <span className="hero-line">Acero a medida</span>
+            <span className="hero-line">para tu obra</span>
+            <span className="hero-line hero-line--accent">en días</span>
           </h1>
           <p>
-            Material IA convierte WhatsApp, planos y croquis en solicitudes claras,
-            cotizaciones y seguimiento comercial para empresas de acero, cubiertas y acabados.
+            Cortamos y doblamos láminas de acero hasta de 8 metros: remates, molduras,
+            canalones y caballetes prepintados, listos para instalar sin reprocesos en obra.
           </p>
-          <ButtonLink href="#contact">Agendar demo</ButtonLink>
+          <ButtonLink href="#contact">Cotizar mi obra</ButtonLink>
         </Reveal>
         <Reveal className="hero-media" delay={0.12}>
           <ImageTile
@@ -244,24 +243,24 @@ function About() {
           />
         </Reveal>
         <Reveal className="about-copy" delay={0.1}>
-          <SectionEyebrow>Solucion</SectionEyebrow>
-          <h2>Una capa de IA para vender materiales complejos.</h2>
+          <SectionEyebrow>Nosotros</SectionEyebrow>
+          <h2>El acero exacto para cada esquina, fachada y cubierta.</h2>
           <p>
-            Las empresas de acero, cubiertas y acabados venden productos con medidas variables,
-            calibres, planos, fotos y tiempos de entrega que cambian por proyecto.
+            Trabajamos láminas de acero prepintado en remates, molduras, canalones y caballetes
+            hasta de 8 metros. Cada pieza se corta y dobla según los planos, fotos o croquis de tu obra.
           </p>
           <p>
-            Material IA ayuda a capturar esa informacion, convertirla en datos comerciales y dar
-            seguimiento desde la primera conversacion hasta el pedido.
+            Usamos IA en el proceso para cotizar al instante y aprovechar mejor cada lámina.
+            Entregamos en días lo que el mercado tarda semanas, al milímetro del plano.
           </p>
           <div className="about-actions">
-            <ButtonLink href="#contact">Agendar demo</ButtonLink>
+            <ButtonLink href="#contact">Cotizar mi obra</ButtonLink>
             <a className="support-link" href="#contact">
               <span aria-hidden="true">
                 <Phone size={20} />
               </span>
-              <small>Para equipos que venden por chat</small>
-              <strong>Sin perder el contexto tecnico</strong>
+              <small>Para constructores e instaladores</small>
+              <strong>Cotizamos por WhatsApp en minutos</strong>
             </a>
           </div>
         </Reveal>
@@ -276,7 +275,7 @@ function Speciality() {
       <div className="shell">
         <Reveal className="section-heading section-heading--center">
           <SectionEyebrow>Especialidad</SectionEyebrow>
-          <h2>Donde Material IA aporta valor</h2>
+          <h2>Lo que nos hace distintos del mercado</h2>
         </Reveal>
         <div className="feature-grid">
           {speciality.map((item, index) => (
@@ -300,7 +299,7 @@ function WorkProcess() {
       <div className="shell">
         <Reveal className="section-heading">
           <SectionEyebrow>Como trabajamos</SectionEyebrow>
-          <h2>De conversaciones sueltas a un flujo comercial claro</h2>
+          <h2>De la lámina al despacho, en pocos días</h2>
         </Reveal>
         <div className="process-grid">
           {processSteps.map((step, index) => (
@@ -324,26 +323,26 @@ function WhyChooseUs() {
     <section className="section why-section">
       <div className="shell why-grid">
         <Reveal className="why-copy">
-          <SectionEyebrow>Por que Material IA</SectionEyebrow>
+          <SectionEyebrow>Por qué nuestro acero</SectionEyebrow>
           <h2>
-            Tu equipo ya vende por WhatsApp. Material IA lo vuelve <span>operable</span>.
+            Acero exacto, prepintado y listo en <span>días</span>.
           </h2>
         </Reveal>
         <Reveal className="why-panel" delay={0.1}>
           <div className="why-feature">
             <Image src={asset("why-icon.svg")} alt="" width={50} height={50} />
             <div>
-              <h3>Comparativo operativo</h3>
+              <h3>Comparativo con el mercado</h3>
               <p>
-                En materiales de construccion, vender rapido no significa responder cualquier cosa:
-                significa pedir los datos correctos, cotizar con contexto y no perder seguimiento.
+                En cubiertas y fachadas, perder un día corta el cronograma. Por eso fabricamos
+                a tu medida, prepintado y entregamos en días, no semanas.
               </p>
             </div>
           </div>
           <div className="comparison-list">
             <div className="comparison-row comparison-row--head">
               <span>Criterio</span>
-              <span>Operacion manual</span>
+              <span>Mercado</span>
               <span>Material IA</span>
             </div>
             {comparisonRows.map((row) => (
@@ -365,10 +364,10 @@ function WhyChooseUs() {
           <div className="why-feature">
             <Image src={asset("process-icon.svg")} alt="" width={50} height={50} />
             <div>
-              <h3>Menos friccion entre ventas y operacion</h3>
+              <h3>Menos reprocesos, más obra avanzada</h3>
               <p>
-                Cada solicitud queda con contexto comercial y tecnico para avanzar sin volver a
-                reconstruir la historia del cliente.
+                Cada pieza llega lista para instalar, doblada al milímetro del plano. Sin recortes
+                en obra, sin uniones que filtren, sin sorpresas en la entrega.
               </p>
             </div>
           </div>
@@ -384,11 +383,11 @@ function Services() {
       <div className="shell">
         <Reveal className="section-heading section-heading--split">
           <div>
-            <SectionEyebrow>Servicios</SectionEyebrow>
-            <h2>Lo que implementamos</h2>
+            <SectionEyebrow>Productos</SectionEyebrow>
+            <h2>Lo que fabricamos</h2>
           </div>
           <ButtonLink href="#contact" variant="outline">
-            Agendar demo
+            Cotizar
           </ButtonLink>
         </Reveal>
         <div className="service-grid">
@@ -419,11 +418,11 @@ function Cta() {
       <div className="shell cta-shell">
         <Reveal className="cta-copy">
           <h2>
-            Veamos como cotiza hoy tu equipo <span>comercial</span>.
+            Cuéntanos qué necesitas para tu <span>obra</span>.
           </h2>
           <p>
-            Revisamos tus conversaciones, productos y reglas comerciales para proponer un flujo de
-            IA que respete como ya vendes.
+            Mándanos los planos, fotos o medidas. Respondemos por WhatsApp o correo con
+            precio y tiempo de entrega en minutos.
           </p>
           <ButtonLink href="mailto:contacto@materialia.ai" variant="white">
             contacto@materialia.ai
@@ -449,23 +448,23 @@ function Cta() {
               <input name="contacto" type="text" placeholder="+57 000 000 0000" />
             </label>
             <label>
-              <span>Tipo de empresa</span>
+              <span>Tipo de obra</span>
               <select name="tipo">
-                <option>Fabricante de materiales</option>
-                <option>Distribuidor de acero o cubiertas</option>
-                <option>Constructora o instalador</option>
-                <option>Otro equipo comercial</option>
+                <option>Cubierta industrial</option>
+                <option>Cubierta residencial</option>
+                <option>Fachada o acabado arquitectónico</option>
+                <option>Mantenimiento o reposición</option>
               </select>
             </label>
             <label className="contact-form__wide">
-              <span>Que quieres automatizar</span>
+              <span>Qué necesitas fabricar</span>
               <textarea
                 name="descripcion"
                 rows={4}
-                placeholder="Cotizaciones por WhatsApp, seguimiento comercial, pedidos, inventario u otro flujo"
+                placeholder="Remates, molduras, canalones, caballetes o piezas a medida. Indica largo y calibre si lo sabes."
               />
             </label>
-            <button type="submit">Enviar solicitud de demo</button>
+            <button type="submit">Solicitar cotización</button>
           </form>
           <div className="contact-methods">
             <a href="mailto:contacto@materialia.ai">
@@ -490,10 +489,10 @@ function Projects() {
         <Reveal className="section-heading section-heading--split">
           <div>
             <SectionEyebrow>Mercado</SectionEyebrow>
-            <h2>Casos donde el flujo comercial se vuelve complejo</h2>
+            <h2>Dónde se instala nuestro acero</h2>
           </div>
           <ButtonLink href="#contact" variant="outline">
-            Hablar del caso
+            Hablar del proyecto
           </ButtonLink>
         </Reveal>
         <div className="project-grid">
@@ -532,7 +531,7 @@ function BuyerProfiles() {
       <div className="shell testimonials-grid">
         <Reveal className="section-heading">
           <SectionEyebrow>Para quien es</SectionEyebrow>
-          <h2>Equipos que necesitan responder mejor sin perder precision</h2>
+          <h2>Para quién es nuestro acero</h2>
         </Reveal>
         <Reveal className="testimonial-card" delay={0.08}>
           <Image
@@ -595,37 +594,6 @@ function BuyerProfiles() {
   );
 }
 
-function Blog() {
-  return (
-    <section className="section blog-section" id="blog">
-      <div className="shell">
-        <Reveal className="section-heading section-heading--split">
-          <div>
-            <SectionEyebrow>Recursos</SectionEyebrow>
-            <h2>Guias para vender materiales con menos friccion</h2>
-          </div>
-          <ButtonLink href="#blog" variant="outline">
-            Ver recursos
-          </ButtonLink>
-        </Reveal>
-        <div className="blog-grid">
-          {blogPosts.map((post, index) => (
-            <Reveal className="blog-card" key={post.title} delay={index * 0.05}>
-              <ImageTile src={post.image} alt={post.title} className="blog-card__image" />
-              <div className="blog-card__body">
-                <span className="blog-category">{post.category}</span>
-                <h3>{post.title}</h3>
-                <p>{post.description}</p>
-                <a href="#contact">Cotizar con esta guia</a>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function Footer() {
   return (
     <footer className="site-footer">
@@ -633,8 +601,8 @@ function Footer() {
         <div className="footer-brand">
           <Logo />
           <p>
-            IA aplicada a cotizacion, seguimiento y operacion comercial para empresas de materiales
-            de construccion.
+            Fabricamos remates, molduras, canalones y caballetes de acero prepintado a la medida
+            exacta de tu obra. Entregas en días, no semanas.
           </p>
         </div>
         {footerGroups.map((group) => (
@@ -685,7 +653,6 @@ export function MaterialIAHome() {
         <Cta />
         <Projects />
         <BuyerProfiles />
-        <Blog />
       </main>
       <Footer />
     </>

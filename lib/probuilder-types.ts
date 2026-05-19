@@ -35,13 +35,6 @@ export type BuyerProfile = {
   avatar: string;
 };
 
-export type BlogPost = {
-  category: string;
-  title: string;
-  description: string;
-  image: string;
-};
-
 export type FooterGroup = {
   title: string;
   links: NavItem[];

@@ -1,5 +1,4 @@
 import type {
-  BlogPost,
   BuyerProfile,
   ClientLogo,
   ComparisonRow,
@@ -15,10 +14,9 @@ const asset = (name: string) => `/probuilder/${name}`;
 
 export const navItems: NavItem[] = [
   { label: "Inicio", href: "#home" },
-  { label: "Solucion", href: "#about" },
-  { label: "Servicios", href: "#services" },
+  { label: "Nosotros", href: "#about" },
+  { label: "Productos", href: "#services" },
   { label: "Mercado", href: "#projects" },
-  { label: "Recursos", href: "#blog" },
 ];
 
 export const clientLogos: ClientLogo[] = [
@@ -30,23 +28,23 @@ export const clientLogos: ClientLogo[] = [
 
 export const speciality: Feature[] = [
   {
-    title: "Cotizacion asistida",
-    description: "Estructura fotos, planos y croquis para convertirlos en solicitudes claras y cotizables.",
+    title: "Hasta 8 metros",
+    description: "Cortamos y doblamos láminas en una sola pieza hasta de 8 metros, sin uniones que filtren agua.",
     icon: asset("speciality-01.svg"),
   },
   {
-    title: "WhatsApp con contexto",
-    description: "Ordena conversaciones, datos del cliente, medidas, materiales y siguientes pasos comerciales.",
+    title: "Acero prepintado",
+    description: "Trabajamos lámina prepintada en colores y calibres listos para instalar, sin obra blanca de remate.",
     icon: asset("speciality-02.svg"),
   },
   {
-    title: "Seguimiento comercial",
-    description: "Da visibilidad a oportunidades, pedidos, pagos pendientes y entregas sin depender de memoria.",
+    title: "Doblado a medida",
+    description: "Cada pieza se ajusta al milímetro a tus planos, fotos o croquis. Acero, aluminio y UPVC.",
     icon: asset("about-mark.svg"),
   },
   {
-    title: "Oferta de inventario",
-    description: "Ayuda a detectar material disponible y sugerir productos que pueden venderse mas rapido.",
+    title: "Entrega en días",
+    description: "Cotizamos por WhatsApp y despachamos en días, no semanas, para no frenar la obra.",
     icon: asset("why-icon.svg"),
   },
 ];
@@ -54,125 +52,98 @@ export const speciality: Feature[] = [
 export const processSteps: ProcessStep[] = [
   {
     number: "01.",
-    title: "Mapeamos la operacion",
-    description: "Entendemos productos, precios, calibres, medidas, canales de venta y reglas de cotizacion.",
+    title: "Cotizamos tu pedido",
+    description: "Envíanos medidas, planos o fotos por WhatsApp. Calculamos calibre, metros y precio en minutos.",
     image: asset("process-01.webp"),
   },
   {
     number: "02.",
-    title: "Configuramos el flujo",
-    description: "Diseñamos la captura de datos, el seguimiento comercial y los estados de cada solicitud.",
+    title: "Cortamos y doblamos",
+    description: "Trabajamos el rollo de acero hasta de 8 metros, cortado al milímetro y doblado a tu medida.",
     image: asset("process-02.webp"),
   },
   {
     number: "03.",
-    title: "Acompanamos adopcion",
-    description: "Lanzamos con el equipo, revisamos casos reales y ajustamos el sistema a la forma de vender.",
+    title: "Despachamos en días",
+    description: "Entregamos la pieza lista para instalar, sin rectificaciones ni reprocesos en obra.",
     image: asset("process-03.webp"),
   },
 ];
 
 export const services: ServiceCard[] = [
   {
-    title: "Asistente de cotizacion",
-    description: "Convierte mensajes, planos y croquis en datos listos para calcular y responder.",
+    title: "Remates y molduras",
+    description: "Acabados arquitectónicos para fachadas, esquinas y muros, cortados al milímetro de tu plano.",
     image: asset("service-01.png"),
   },
   {
-    title: "Pipeline comercial",
-    description: "Centraliza prospectos, clientes, pedidos, pagos y proximas acciones del equipo.",
+    title: "Canalones y bajantes",
+    description: "Canales de aguas lluvias en una sola pieza hasta de 8 metros. Sin uniones, sin filtraciones.",
     image: asset("service-02.png"),
   },
   {
-    title: "Pedidos y produccion",
-    description: "Conecta la venta con estados operativos para saber que se debe fabricar o despachar.",
+    title: "Caballetes y tapagoteros",
+    description: "Remates de cubierta que impiden el paso de agua donde se unen láminas, muros y aleros.",
     image: asset("service-03.png"),
   },
   {
-    title: "Inteligencia de inventario",
-    description: "Sugiere oportunidades comerciales a partir de material, medidas y demanda recurrente.",
+    title: "Doblez a medida",
+    description: "Piezas especiales según tu plano, foto o croquis. Acero, aluminio o UPVC en varios calibres.",
     image: asset("service-04.png"),
   },
 ];
 
 export const projects: ProjectCard[] = [
   {
-    title: "Acero y cubiertas",
-    description: "Remates, molduras, caballetes, canalones y accesorios para cubierta.",
+    title: "Cubiertas industriales",
+    description: "Canalones, caballetes y remates para techos de bodegas, plantas y colegios.",
     image: asset("project-01.webp"),
   },
   {
-    title: "Fabricacion a medida",
-    description: "Productos que dependen de medidas, planos, calibres y largos variables.",
+    title: "Fachadas arquitectónicas",
+    description: "Molduras y acabados prepintados que dan terminación a edificios, casas y locales.",
     image: asset("project-02.webp"),
   },
   {
-    title: "Distribucion de materiales",
-    description: "Equipos que venden por WhatsApp y necesitan ordenar clientes y cotizaciones.",
+    title: "Mantenimiento de techos",
+    description: "Reposición de canales, bajantes y remates en cubiertas existentes, sin parar la operación.",
     image: asset("project-03.webp"),
   },
   {
-    title: "Mantenimiento de obra",
-    description: "Solicitudes urgentes con fotos, visitas, reparaciones y seguimiento de entregas.",
+    title: "Obra a medida",
+    description: "Piezas únicas para arquitectos con retos específicos: marcos, muros, esquinas y aleros.",
     image: asset("project-04.webp"),
   },
 ];
 
 export const buyerProfiles: BuyerProfile[] = [
   {
-    title: "Fabricantes de piezas a medida",
+    title: "Constructores e instaladores",
     description:
-      "Empresas que reciben croquis, fotos o planos y necesitan cotizar rapido sin perder precision tecnica.",
-    context: "Remates, molduras, canalones y accesorios",
+      "Empresas que instalan cubiertas para colegios, industria o residencial y necesitan piezas listas en días, no semanas.",
+    context: "Cubiertas industriales y residenciales",
     avatar: asset("client-01.svg"),
   },
   {
-    title: "Distribuidores de acero y cubiertas",
+    title: "Arquitectos con obra a medida",
     description:
-      "Equipos comerciales que atienden muchas solicitudes por WhatsApp y necesitan visibilidad del pipeline.",
-    context: "Ventas recurrentes, pedidos y seguimiento",
+      "Diseñadores que necesitan molduras y acabados en formas, calibres y colores que el mercado estándar no maneja.",
+    context: "Fachadas, interiores y acabados",
     avatar: asset("client-02.svg"),
   },
   {
-    title: "Constructores e instaladores",
+    title: "Mantenimiento de cubierta",
     description:
-      "Clientes que piden respuestas claras, tiempos de entrega y piezas ajustadas a condiciones de obra.",
-    context: "Cubiertas, fachadas, mantenimiento y obra",
+      "Equipos que reparan techos industriales o residenciales y necesitan repuestos exactos sin esperar semanas de fabricación.",
+    context: "Reparación y reposición de techos",
     avatar: asset("client-03.jpg"),
   },
   {
-    title: "Gerencias comerciales",
+    title: "Constructores de obra blanca",
     description:
-      "Lideres que quieren saber que se esta cotizando, que se gano, que se perdio y que falta responder.",
-    context: "Control comercial sin frenar al equipo",
+      "Quien necesita marcos de puerta, remates o piezas de acero a medida para cerrar la obra sin retrasos.",
+    context: "Marcos, esquinas y terminación",
     avatar: asset("client-04.jpg"),
-  },
-];
-
-export const blogPosts: BlogPost[] = [
-  {
-    category: "WhatsApp",
-    title: "Como ordenar cotizaciones que llegan por mensaje",
-    description: "Una guia para pasar de conversaciones sueltas a solicitudes con datos accionables.",
-    image: asset("blog-01.webp"),
-  },
-  {
-    category: "Cotizacion",
-    title: "Que datos pedir para cotizar piezas a medida",
-    description: "Medidas, material, calibre, largos y cantidades para evitar reprocesos comerciales.",
-    image: asset("blog-02.webp"),
-  },
-  {
-    category: "Ventas",
-    title: "Como convertir material disponible en ofertas",
-    description: "Ideas para detectar oportunidades comerciales a partir de inventario y demanda recurrente.",
-    image: asset("blog-03.webp"),
-  },
-  {
-    category: "Operacion",
-    title: "Indicadores utiles para ventas de materiales",
-    description: "Seguimiento de tiempos de respuesta, cotizaciones abiertas, pedidos y entregas.",
-    image: asset("blog-04.webp"),
   },
 ];
 
@@ -181,33 +152,33 @@ export const footerGroups: FooterGroup[] = [
     title: "Navegacion",
     links: [
       { label: "Inicio", href: "#home" },
-      { label: "Solucion", href: "#about" },
-      { label: "Servicios", href: "#services" },
+      { label: "Nosotros", href: "#about" },
+      { label: "Productos", href: "#services" },
       { label: "Mercado", href: "#projects" },
-      { label: "Recursos", href: "#blog" },
     ],
   },
   {
-    title: "Solucion",
+    title: "Productos",
     links: [
-      { label: "Cotizacion asistida", href: "#services" },
-      { label: "Pipeline comercial", href: "#services" },
-      { label: "Pedidos y produccion", href: "#services" },
-      { label: "Inteligencia de inventario", href: "#services" },
+      { label: "Remates y molduras", href: "#services" },
+      { label: "Canalones y bajantes", href: "#services" },
+      { label: "Caballetes y tapagoteros", href: "#services" },
+      { label: "Doblez a medida", href: "#services" },
     ],
   },
 ];
 
 export const stats = [
-  { value: "1", label: "Lugar para solicitudes y seguimiento" },
-  { value: "24/7", label: "Captura ordenada de nuevos requerimientos" },
-  { value: "IA", label: "Apoyo para responder con mas contexto" },
+  { value: "8m", label: "Largo máximo en una sola pieza" },
+  { value: "Días", label: "Tiempo típico de entrega" },
+  { value: "100%", label: "Piezas cortadas a medida del plano" },
 ];
 
 export const comparisonRows: ComparisonRow[] = [
-  { factor: "Entrada", market: "Chats dispersos", materialIa: "Solicitudes estructuradas" },
-  { factor: "Cotizacion", market: "Datos incompletos", materialIa: "Campos tecnicos claros" },
-  { factor: "Seguimiento", market: "Depende de memoria", materialIa: "Pipeline visible" },
-  { factor: "Pedidos", market: "Estados manuales", materialIa: "Flujo trazable" },
-  { factor: "Venta", market: "Reactiva", materialIa: "Oportunidades sugeridas" },
+  { factor: "Largo", market: "Hasta 2,44 m", materialIa: "Hasta 8 m" },
+  { factor: "Forma", market: "Estándar", materialIa: "A tu medida" },
+  { factor: "Entrega", market: "Semanas", materialIa: "Días" },
+  { factor: "Acero", market: "Sin pintar", materialIa: "Prepintado" },
+  { factor: "Acabado", market: "Reprocesos en obra", materialIa: "Listo para instalar" },
+  { factor: "Materiales", market: "Solo acero", materialIa: "Acero, aluminio, UPVC" },
 ];

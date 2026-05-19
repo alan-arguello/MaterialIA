@@ -27,9 +27,9 @@ const siteUrl = rawSiteUrl.startsWith("http")
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Material IA - IA para cotizar materiales de construccion",
+  title: "Material IA - Acero a medida para construcción, en días",
   description:
-    "Automatizacion de cotizaciones, seguimiento comercial y pedidos para empresas de acero, cubiertas, acabados y materiales de construccion.",
+    "Fabricamos remates, molduras, canalones y caballetes de acero prepintado hasta 8 metros, cortados al milímetro y entregados en días.",
   alternates: {
     canonical: "/",
   },
@@ -37,9 +37,9 @@ export const metadata: Metadata = {
     icon: "/probuilder/favicon.png",
   },
   openGraph: {
-    title: "Material IA - IA para cotizar materiales de construccion",
+    title: "Material IA - Acero a medida para construcción, en días",
     description:
-      "Automatizacion de cotizaciones, seguimiento comercial y pedidos para empresas de acero, cubiertas, acabados y materiales de construccion.",
+      "Fabricamos remates, molduras, canalones y caballetes de acero prepintado hasta 8 metros, cortados al milímetro y entregados en días.",
     images: ["/probuilder/og.jpg"],
   },
 };
