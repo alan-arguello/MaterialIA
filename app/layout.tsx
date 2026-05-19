@@ -1,19 +1,16 @@
 import type { Metadata } from "next";
-import { Instrument_Serif, Rubik } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const rubik = Rubik({
+const geist = Geist({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
   variable: "--font-rubik",
   display: "swap",
 });
 
-const instrumentSerif = Instrument_Serif({
+const geistMono = Geist_Mono({
   subsets: ["latin"],
-  weight: "400",
-  style: "italic",
-  variable: "--font-instrument",
+  variable: "--font-mono",
   display: "swap",
 });
 
@@ -27,7 +24,7 @@ const siteUrl = rawSiteUrl.startsWith("http")
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Material IA - Acero a medida para construcción, en días",
+  title: "Material IA - Acero a medida para obras en días",
   description:
     "Fabricamos remates, molduras, canalones y caballetes de acero prepintado hasta 8 metros, cortados al milímetro y entregados en días.",
   alternates: {
@@ -37,7 +34,7 @@ export const metadata: Metadata = {
     icon: "/probuilder/favicon.png",
   },
   openGraph: {
-    title: "Material IA - Acero a medida para construcción, en días",
+    title: "Material IA - Acero a medida para obras en días",
     description:
       "Fabricamos remates, molduras, canalones y caballetes de acero prepintado hasta 8 metros, cortados al milímetro y entregados en días.",
     images: ["/probuilder/og.jpg"],
@@ -50,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${rubik.variable} ${instrumentSerif.variable}`}>
+    <html lang="es" className={`${geist.variable} ${geistMono.variable}`}>
       <body>{children}</body>
     </html>
   );

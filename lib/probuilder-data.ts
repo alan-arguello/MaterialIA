@@ -20,10 +20,10 @@ export const navItems: NavItem[] = [
 ];
 
 export const clientLogos: ClientLogo[] = [
-  { name: "Mecacivil", image: asset("client-mecacivil.avif") },
-  { name: "MEISA", image: asset("client-meisa.png") },
-  { name: "Arquio", image: asset("client-arquo.png") },
-  { name: "Metecno", image: asset("client-metecno.jpg") },
+  { name: "Mecacivil", image: asset("client-mecacivil-social.png") },
+  { name: "MEISA", image: asset("client-meisa-social.png") },
+  { name: "Arquio", image: asset("client-arquo-social.png") },
+  { name: "Metecno", image: asset("client-metecno-social.png") },
 ];
 
 export const speciality: Feature[] = [

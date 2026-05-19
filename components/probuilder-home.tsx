@@ -169,58 +169,48 @@ function ImageTile({
 function Hero() {
   return (
     <section className="hero section" id="home">
-      <div className="hero-grid shell">
-        <Reveal className="hero-copy">
-          <SectionEyebrow>Acero a medida para construcción</SectionEyebrow>
+      <video
+        className="hero-video"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        poster={asset("materialia-hero-poster.jpg")}
+        aria-hidden="true"
+      >
+        <source src={asset("materialia-hero.mp4")} type="video/mp4" />
+      </video>
+      <div className="hero-overlay" aria-hidden="true" />
+      <div className="hero-content shell">
+        <Reveal className="hero-copy hero-copy--center">
           <h1>
             <span className="hero-line">Acero a medida</span>
-            <span className="hero-line">para tu obra</span>
-            <span className="hero-line hero-line--accent">en días</span>
+            <span className="hero-line">para tu obra en días</span>
           </h1>
           <p>
             Cortamos y doblamos láminas de acero hasta de 8 metros: remates, molduras,
             canalones y caballetes prepintados, listos para instalar sin reprocesos en obra.
           </p>
-          <ButtonLink href="#contact">Cotizar mi obra</ButtonLink>
-        </Reveal>
-        <Reveal className="hero-media" delay={0.12}>
-          <ImageTile
-            src={asset("hero.png")}
-            alt="Obra con estructura y acabados metalicos"
-            className="hero-image"
-            priority
-          />
-          <div className="hero-card">
-            <Image src={asset("hero-card.png")} alt="" width={196} height={142} />
+          <div className="hero-actions">
+            <ButtonLink href="#contact">Cotizar mi obra</ButtonLink>
+            <ButtonLink href="#services" variant="white">
+              Ver productos
+            </ButtonLink>
           </div>
-          <div className="hero-accent">
-            <Image src={asset("hero-accent.png")} alt="" fill sizes="160px" />
-          </div>
-          <Image
-            className="hero-shape"
-            src={asset("hero-shape.svg")}
-            alt=""
-            width={118}
-            height={118}
-            aria-hidden="true"
-            style={{ height: "auto" }}
-          />
         </Reveal>
       </div>
-    </section>
-  );
-}
-
-function BrandStrip() {
-  return (
-    <section className="brand-strip" aria-label="Clientes de Material IA">
-      <p className="brand-strip__label">Clientes y aliados del sector construccion</p>
-      <div className="brand-track shell">
-        {clientLogos.map((client) => (
-          <div className="brand-item" key={client.name}>
-            <Image src={client.image} alt={client.name} width={220} height={78} />
+      <div className="hero-social">
+        <Reveal className="hero-social__inner" delay={0.16}>
+          <p>Clientes y aliados del sector construcción</p>
+          <div className="hero-logo-track">
+            {clientLogos.map((client) => (
+              <div className="hero-logo" key={client.name}>
+                <Image src={client.image} alt={client.name} width={180} height={64} />
+              </div>
+            ))}
           </div>
-        ))}
+        </Reveal>
       </div>
     </section>
   );
@@ -644,7 +634,6 @@ export function MaterialIAHome() {
       <Header />
       <main>
         <Hero />
-        <BrandStrip />
         <About />
         <Speciality />
         <WorkProcess />
