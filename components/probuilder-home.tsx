@@ -12,7 +12,7 @@ import {
   Phone,
   X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import {
   buyerProfiles,
   clientLogos,
@@ -529,6 +529,53 @@ function Services() {
 }
 
 function Cta() {
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+  const [submitMessage, setSubmitMessage] = useState("");
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    setSubmitStatus("submitting");
+    setSubmitMessage("");
+
+    try {
+      const response = await fetch("/api/cotizaciones", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(Object.fromEntries(formData)),
+      });
+      const data = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
+
+      if (!response.ok) {
+        throw new Error(
+          data?.error ?? "No pudimos enviar tu solicitud. Intenta de nuevo.",
+        );
+      }
+
+      form.reset();
+      setSubmitStatus("success");
+      setSubmitMessage(
+        "Recibimos tu solicitud. Te contactaremos por WhatsApp o correo.",
+      );
+    } catch (error) {
+      setSubmitStatus("error");
+      setSubmitMessage(
+        error instanceof Error
+          ? error.message
+          : "No pudimos enviar tu solicitud. Intenta de nuevo.",
+      );
+    }
+  };
+
   return (
     <section className="section cta-section" id="contact">
       <div className="shell cta-shell">
@@ -552,27 +599,44 @@ function Cta() {
               qué pieza necesitas y qué tan urgente es la obra.
             </p>
           </div>
-          <form
-            className="contact-form"
-            action="mailto:contacto@materialia.ai"
-            method="post"
-            encType="text/plain"
-          >
+          <form className="contact-form" onSubmit={handleSubmit}>
             <label>
-              <span>Nombre o empresa</span>
+              <span>Nombre de la persona</span>
               <input
-                name="nombre_empresa"
+                name="nombre_persona"
                 type="text"
-                placeholder="Nombre, constructora o proyecto"
-                autoComplete="organization"
+                placeholder="Nombre y apellido"
+                autoComplete="name"
+                required
               />
             </label>
             <label>
-              <span>WhatsApp o correo</span>
+              <span>Empresa</span>
               <input
-                name="contacto"
+                name="empresa"
                 type="text"
-                placeholder="Número o email"
+                placeholder="Constructora, empresa o proyecto"
+                autoComplete="organization"
+                required
+              />
+            </label>
+            <label>
+              <span>WhatsApp con lada</span>
+              <input
+                name="whatsapp"
+                type="tel"
+                placeholder="+52 55 1234 5678"
+                autoComplete="tel"
+                inputMode="tel"
+                required
+              />
+            </label>
+            <label>
+              <span>Correo</span>
+              <input
+                name="email"
+                type="email"
+                placeholder="nombre@empresa.com"
                 autoComplete="email"
                 required
               />
@@ -620,7 +684,19 @@ function Cta() {
                 required
               />
             </label>
-            <button type="submit">Solicitar cotización</button>
+            {submitMessage ? (
+              <p
+                className={`contact-form__status contact-form__status--${submitStatus}`}
+                role={submitStatus === "error" ? "alert" : "status"}
+              >
+                {submitMessage}
+              </p>
+            ) : null}
+            <button type="submit" disabled={submitStatus === "submitting"}>
+              {submitStatus === "submitting"
+                ? "Enviando..."
+                : "Solicitar cotización"}
+            </button>
           </form>
           <div className="contact-methods">
             <a href="mailto:contacto@materialia.ai">
