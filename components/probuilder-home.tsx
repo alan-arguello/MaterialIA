@@ -281,6 +281,78 @@ function About() {
   );
 }
 
+function Founder() {
+  return (
+    <section className="section founder-section">
+      <div className="shell">
+        <Reveal className="founder-panel">
+          <div className="founder-copy">
+            <Image
+              className="founder-avatar"
+              src={asset("cesar-quevedo.jpg")}
+              alt="Cesar Quevedo, CEO de Material IA"
+              width={96}
+              height={96}
+            />
+            <div>
+              <h2>Respaldada por años de experiencia real en el mercado.</h2>
+              <p>
+                Material IA es liderada por Cesar Quevedo, CEO con experiencia
+                en estrategia, finanzas y supply chain. Ha trabajado por más de
+                10 años en Metecno y combina operación, datos e IA para reducir
+                reprocesos y acelerar decisiones en obra.
+              </p>
+              <a
+                className="founder-link"
+                href="https://www.linkedin.com/in/caqrs/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Ver perfil de Cesar
+                <ArrowUpRight size={17} strokeWidth={2.4} />
+              </a>
+            </div>
+          </div>
+          <div className="founder-logos" aria-label="Experiencia y formación">
+            <div className="founder-logo">
+              <Image
+                src={asset("logo-metecno.png")}
+                alt="Metecno"
+                width={190}
+                height={70}
+              />
+            </div>
+            <div className="founder-logo">
+              <Image
+                src={asset("logo-egade.jpg")}
+                alt="EGADE Business School"
+                width={150}
+                height={70}
+              />
+            </div>
+            <div className="founder-logo">
+              <Image
+                src={asset("logo-berkeley.png")}
+                alt="UC Berkeley Extension"
+                width={70}
+                height={70}
+              />
+            </div>
+            <div className="founder-logo">
+              <Image
+                src={asset("logo-javeriana.jpg")}
+                alt="Pontificia Universidad Javeriana"
+                width={88}
+                height={88}
+              />
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
 function Speciality() {
   return (
     <section className="section speciality-section">
@@ -345,24 +417,34 @@ function WorkProcess() {
 function WhyChooseUs() {
   return (
     <section className="section why-section">
-      <div className="shell why-grid">
-        <Reveal className="why-copy">
-          <SectionEyebrow>Por qué nuestro acero</SectionEyebrow>
-          <h2>
-            Acero exacto, prepintado y listo en <span>días</span>.
-          </h2>
+      <div className="shell why-shell">
+        <Reveal className="why-intro">
+          <div>
+            <h2>
+              Acero exacto, prepintado y listo en <span>días</span>.
+            </h2>
+          </div>
+          <p>
+            En cubiertas y fachadas, perder un día corta el cronograma. Por eso
+            fabricamos a tu medida, prepintado y listo para instalar sin
+            reprocesos en obra.
+          </p>
         </Reveal>
-        <Reveal className="why-panel" delay={0.1}>
-          <div className="why-feature">
-            <Image src={asset("why-icon.svg")} alt="" width={50} height={50} />
-            <div>
-              <h3>Comparativo con el mercado</h3>
-              <p>
-                En cubiertas y fachadas, perder un día corta el cronograma. Por
-                eso fabricamos a tu medida, prepintado y entregamos en días, no
-                semanas.
-              </p>
+        <Reveal className="why-stats" delay={0.08}>
+          {stats.map((item) => (
+            <div className="stat" key={item.label}>
+              <strong>{item.value}</strong>
+              <span>{item.label}</span>
             </div>
+          ))}
+        </Reveal>
+        <Reveal className="why-comparison-card" delay={0.12}>
+          <div className="why-comparison-head">
+            <h3>Comparativo con el mercado</h3>
+            <p>
+              La diferencia se nota en medidas largas, piezas especiales,
+              entrega rápida y acabado listo para instalar.
+            </p>
           </div>
           <div className="comparison-list">
             <div className="comparison-row comparison-row--head">
@@ -378,30 +460,16 @@ function WhyChooseUs() {
               </div>
             ))}
           </div>
-          <div className="stat-row">
-            {stats.map((item) => (
-              <div className="stat" key={item.label}>
-                <strong>{item.value}</strong>
-                <span>{item.label}</span>
-              </div>
-            ))}
+        </Reveal>
+        <Reveal className="why-result" delay={0.16}>
+          <div>
+            <span>Resultado</span>
+            <h3>Menos reprocesos, más obra avanzada</h3>
           </div>
-          <div className="why-feature">
-            <Image
-              src={asset("process-icon.svg")}
-              alt=""
-              width={50}
-              height={50}
-            />
-            <div>
-              <h3>Menos reprocesos, más obra avanzada</h3>
-              <p>
-                Cada pieza llega lista para instalar, doblada al milímetro del
-                plano. Sin recortes en obra, sin uniones que filtren, sin
-                sorpresas en la entrega.
-              </p>
-            </div>
-          </div>
+          <p>
+            Cada pieza llega doblada al milímetro del plano. Sin recortes en
+            obra, sin uniones que filtren y sin sorpresas en la entrega.
+          </p>
         </Reveal>
       </div>
     </section>
@@ -459,14 +527,21 @@ function Cta() {
             Cuéntanos qué necesitas para tu <span>obra</span>.
           </h2>
           <p>
-            Mándanos los planos, fotos o medidas. Respondemos por WhatsApp o
-            correo con precio y tiempo de entrega en minutos.
+            Dinos qué pieza necesitas, dónde va instalada y qué tan urgente es.
+            Con fotos, medidas aproximadas o un croquis podemos empezar.
           </p>
           <ButtonLink href="mailto:contacto@materialia.ai" variant="white">
             contacto@materialia.ai
           </ButtonLink>
         </Reveal>
         <Reveal className="contact-panel" delay={0.1}>
+          <div className="contact-panel__header">
+            <h3>Cotiza con lo esencial</h3>
+            <p>
+              Con tres datos podemos pre-calificar la solicitud: quién eres,
+              qué pieza necesitas y qué tan urgente es la obra.
+            </p>
+          </div>
           <form
             className="contact-form"
             action="mailto:contacto@materialia.ai"
@@ -474,40 +549,65 @@ function Cta() {
             encType="text/plain"
           >
             <label>
-              <span>Nombre</span>
-              <input name="nombre" type="text" placeholder="Tu nombre" />
-            </label>
-            <label>
-              <span>Empresa</span>
+              <span>Nombre o empresa</span>
               <input
-                name="empresa"
+                name="nombre_empresa"
                 type="text"
-                placeholder="Constructora o proyecto"
+                placeholder="Nombre, constructora o proyecto"
+                autoComplete="organization"
               />
             </label>
             <label>
-              <span>Telefono o correo</span>
+              <span>WhatsApp o correo</span>
               <input
                 name="contacto"
                 type="text"
-                placeholder="+57 000 000 0000"
+                placeholder="Número o email"
+                autoComplete="email"
+                required
               />
             </label>
             <label>
-              <span>Tipo de obra</span>
-              <select name="tipo">
-                <option>Cubierta industrial</option>
-                <option>Cubierta residencial</option>
+              <span>Tipo de cliente</span>
+              <select name="tipo_cliente" defaultValue="" required>
+                <option value="" disabled>
+                  Selecciona una opción
+                </option>
+                <option>Constructor o instalador</option>
+                <option>Arquitecto o diseñador</option>
+                <option>Empresa, colegio o industria</option>
+                <option>Mantenimiento de cubierta</option>
+                <option>Particular u otro</option>
+              </select>
+            </label>
+            <label>
+              <span>Qué necesitas</span>
+              <select name="necesidad" defaultValue="" required>
+                <option value="" disabled>
+                  Selecciona una opción
+                </option>
+                <option>Canalones, caballetes o remates</option>
                 <option>Fachada o acabado arquitectónico</option>
-                <option>Mantenimiento o reposición</option>
+                <option>Mantenimiento o filtración</option>
+                <option>Marco, puerta o pieza especial</option>
+                <option>Impermeabilización u otro</option>
               </select>
             </label>
             <label className="contact-form__wide">
-              <span>Qué necesitas fabricar</span>
+              <span>Urgencia</span>
+              <select name="urgencia" defaultValue="Estoy cotizando para planear">
+                <option>Esta semana</option>
+                <option>En 1 a 2 semanas</option>
+                <option>Estoy cotizando para planear</option>
+              </select>
+            </label>
+            <label className="contact-form__wide">
+              <span>Detalles para cotizar</span>
               <textarea
-                name="descripcion"
+                name="detalles"
                 rows={4}
-                placeholder="Remates, molduras, canalones, caballetes o piezas a medida. Indica largo y calibre si lo sabes."
+                placeholder="Medidas aproximadas, cantidad, largo máximo, color o calibre si lo sabes. Si tienes fotos, planos o croquis, menciónalo aquí."
+                required
               />
             </label>
             <button type="submit">Solicitar cotización</button>
@@ -517,10 +617,10 @@ function Cta() {
               <Mail size={18} />
               contacto@materialia.ai
             </a>
-            <a href="tel:+570000000000">
+            <span>
               <Phone size={18} />
-              +57 000 000 0000
-            </a>
+              Respuesta por WhatsApp o correo
+            </span>
           </div>
         </Reveal>
       </div>
@@ -686,10 +786,10 @@ function Footer() {
             <Mail size={18} />
             contacto@materialia.ai
           </a>
-          <a href="tel:+570000000000">
+          <span>
             <Phone size={18} />
-            +57 000 000 0000
-          </a>
+            WhatsApp o correo al solicitar cotización
+          </span>
           <span>
             <MapPin size={18} />
             Colombia
@@ -712,6 +812,7 @@ export function MaterialIAHome() {
       <main>
         <Hero />
         <About />
+        <Founder />
         <Speciality />
         <WorkProcess />
         <WhyChooseUs />

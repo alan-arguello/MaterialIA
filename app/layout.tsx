@@ -22,21 +22,63 @@ const siteUrl = rawSiteUrl.startsWith("http")
   ? rawSiteUrl
   : `${rawSiteUrl.includes("localhost") ? "http" : "https"}://${rawSiteUrl}`;
 
+const siteDescription =
+  "Remates, molduras, canalones y caballetes de acero prepintado hasta 8 m para cubiertas y fachadas. Cotiza con planos o fotos y recibe en días.";
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Material IA - Acero a medida para obras en días",
-  description:
-    "Fabricamos remates, molduras, canalones y caballetes de acero prepintado hasta 8 metros, cortados al milímetro y entregados en días.",
+  applicationName: "Material IA",
+  title: "Material IA | Acero a medida para obras en días",
+  description: siteDescription,
+  keywords: [
+    "acero prepintado",
+    "remates de cubierta",
+    "canalones a medida",
+    "caballetes para techo",
+    "molduras para fachada",
+    "doblez de lamina",
+    "cubiertas industriales",
+    "fachadas arquitectonicas",
+  ],
+  creator: "Material IA",
+  publisher: "Material IA",
   alternates: {
     canonical: "/",
   },
   icons: {
     icon: "/probuilder/favicon.png",
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   openGraph: {
-    title: "Material IA - Acero a medida para obras en días",
-    description:
-      "Fabricamos remates, molduras, canalones y caballetes de acero prepintado hasta 8 metros, cortados al milímetro y entregados en días.",
+    title: "Material IA | Acero a medida para obras en días",
+    description: siteDescription,
+    url: "/",
+    siteName: "Material IA",
+    locale: "es_CO",
+    type: "website",
+    images: [
+      {
+        url: "/probuilder/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Material IA - acero prepintado a medida para cubiertas y fachadas",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Material IA | Acero a medida para obras en días",
+    description: siteDescription,
     images: ["/probuilder/og.jpg"],
   },
 };
