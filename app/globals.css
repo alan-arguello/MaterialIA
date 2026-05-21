@@ -430,7 +430,7 @@ h1 .hero-line.hero-line--accent {
 .hero-logo-track {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 34px;
   align-items: center;
   overflow: visible;
@@ -884,26 +884,66 @@ h1 .hero-line.hero-line--accent {
 }
 
 .founder-logos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.founder-logo-card {
+  min-height: 88px;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: 132px 1fr;
+  gap: 18px;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid rgba(7, 13, 31, 0.08);
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(247, 249, 252, 0.8)),
+    var(--white);
 }
 
 .founder-logo {
-  min-height: 82px;
+  min-height: 58px;
   display: grid;
   place-items: center;
-  padding: 14px;
-  border: 1px solid rgba(7, 13, 31, 0.08);
-  border-radius: 14px;
+  padding: 10px 12px;
+  border-radius: 12px;
   background: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(7, 13, 31, 0.06);
 }
 
 .founder-logo img {
   width: 100%;
-  max-width: 170px;
-  max-height: 54px;
+  max-width: 108px;
+  max-height: 34px;
   object-fit: contain;
+}
+
+.founder-logo--seal img {
+  max-width: 42px;
+  max-height: 42px;
+}
+
+.founder-logo-card small,
+.founder-logo-card strong {
+  display: block;
+}
+
+.founder-logo-card small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.founder-logo-card strong {
+  margin-top: 4px;
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.25;
+  font-weight: 620;
 }
 
 .founder-link {
@@ -1974,7 +2014,7 @@ h1 .hero-line.hero-line--accent {
   }
 
   .founder-logos {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
   }
 
   .hero {
@@ -2147,12 +2187,33 @@ h1 .hero-line.hero-line--accent {
   }
 
   .founder-logos {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .founder-logo-card {
+    min-height: 78px;
+    grid-template-columns: 96px 1fr;
+    gap: 12px;
+    padding: 12px;
   }
 
   .founder-logo {
-    min-height: 72px;
-    padding: 12px;
+    min-height: 54px;
+    padding: 9px 10px;
+  }
+
+  .founder-logo img {
+    max-width: 80px;
+    max-height: 28px;
+  }
+
+  .founder-logo--seal img {
+    max-width: 36px;
+    max-height: 36px;
+  }
+
+  .founder-logo-card strong {
+    font-size: 14px;
   }
 
   .why-section::after {
@@ -2378,5 +2439,17 @@ h1 .hero-line.hero-line--accent {
 
   .hero-copy p {
     font-size: 14px;
+  }
+
+  .founder-logo-card {
+    grid-template-columns: 78px 1fr;
+  }
+
+  .founder-logo-card small {
+    font-size: 10px;
+  }
+
+  .founder-logo-card strong {
+    font-size: 13px;
   }
 }

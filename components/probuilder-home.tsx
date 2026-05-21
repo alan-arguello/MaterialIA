@@ -314,37 +314,47 @@ function Founder() {
             </div>
           </div>
           <div className="founder-logos" aria-label="Experiencia y formación">
-            <div className="founder-logo">
-              <Image
-                src={asset("logo-metecno.png")}
-                alt="Metecno"
-                width={190}
-                height={70}
-              />
+            <div className="founder-logo-card">
+              <span className="founder-logo">
+                <Image
+                  src={asset("logo-egade.jpg")}
+                  alt="EGADE Business School"
+                  width={150}
+                  height={70}
+                />
+              </span>
+              <span>
+                <small>Formación ejecutiva</small>
+                <strong>EGADE Business School</strong>
+              </span>
             </div>
-            <div className="founder-logo">
-              <Image
-                src={asset("logo-egade.jpg")}
-                alt="EGADE Business School"
-                width={150}
-                height={70}
-              />
+            <div className="founder-logo-card">
+              <span className="founder-logo founder-logo--seal">
+                <Image
+                  src={asset("logo-berkeley.png")}
+                  alt="UC Berkeley Extension"
+                  width={70}
+                  height={70}
+                />
+              </span>
+              <span>
+                <small>Innovación y negocio</small>
+                <strong>UC Berkeley Extension</strong>
+              </span>
             </div>
-            <div className="founder-logo">
-              <Image
-                src={asset("logo-berkeley.png")}
-                alt="UC Berkeley Extension"
-                width={70}
-                height={70}
-              />
-            </div>
-            <div className="founder-logo">
-              <Image
-                src={asset("logo-javeriana.jpg")}
-                alt="Pontificia Universidad Javeriana"
-                width={88}
-                height={88}
-              />
+            <div className="founder-logo-card">
+              <span className="founder-logo founder-logo--seal">
+                <Image
+                  src={asset("logo-javeriana.jpg")}
+                  alt="Pontificia Universidad Javeriana"
+                  width={88}
+                  height={88}
+                />
+              </span>
+              <span>
+                <small>Base profesional</small>
+                <strong>Pontificia Universidad Javeriana</strong>
+              </span>
             </div>
           </div>
         </Reveal>

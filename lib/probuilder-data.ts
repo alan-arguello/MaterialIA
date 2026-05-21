@@ -23,7 +23,6 @@ export const clientLogos: ClientLogo[] = [
   { name: "Mecacivil", image: asset("client-mecacivil-social.png") },
   { name: "MEISA", image: asset("client-meisa-social.png") },
   { name: "Arquio", image: asset("client-arquo-social.png") },
-  { name: "Metecno", image: asset("client-metecno-social.png") },
 ];
 
 export const speciality: Feature[] = [
