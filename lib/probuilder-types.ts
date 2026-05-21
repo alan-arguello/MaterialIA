@@ -20,6 +20,7 @@ export type ServiceCard = {
   title: string;
   description: string;
   image: string;
+  imagePosition?: string;
 };
 
 export type ProjectCard = {

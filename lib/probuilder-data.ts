@@ -54,19 +54,19 @@ export const processSteps: ProcessStep[] = [
     number: "01.",
     title: "Cotizamos tu pedido",
     description: "Envíanos medidas, planos o fotos por WhatsApp. Calculamos calibre, metros y precio en minutos.",
-    image: asset("process-01.webp"),
+    image: asset("process-cotizar.jpeg"),
   },
   {
     number: "02.",
     title: "Cortamos y doblamos",
     description: "Trabajamos el rollo de acero hasta de 8 metros, cortado al milímetro y doblado a tu medida.",
-    image: asset("process-02.webp"),
+    image: asset("process-cortar.jpg"),
   },
   {
     number: "03.",
     title: "Despachamos en días",
     description: "Entregamos la pieza lista para instalar, sin rectificaciones ni reprocesos en obra.",
-    image: asset("process-03.webp"),
+    image: asset("process-despacho.jpg"),
   },
 ];
 
@@ -74,22 +74,26 @@ export const services: ServiceCard[] = [
   {
     title: "Remates y molduras",
     description: "Acabados arquitectónicos para fachadas, esquinas y muros, cortados al milímetro de tu plano.",
-    image: asset("service-01.png"),
+    image: asset("service-remates.jpg"),
+    imagePosition: "center center",
   },
   {
     title: "Canalones y bajantes",
     description: "Canales de aguas lluvias en una sola pieza hasta de 8 metros. Sin uniones, sin filtraciones.",
-    image: asset("service-02.png"),
+    image: asset("service-canalones.jpg"),
+    imagePosition: "center 28%",
   },
   {
     title: "Caballetes y tapagoteros",
     description: "Remates de cubierta que impiden el paso de agua donde se unen láminas, muros y aleros.",
-    image: asset("service-03.png"),
+    image: asset("service-caballetes.jpg"),
+    imagePosition: "center 62%",
   },
   {
     title: "Doblez a medida",
     description: "Piezas especiales según tu plano, foto o croquis. Acero, aluminio o UPVC en varios calibres.",
-    image: asset("service-04.png"),
+    image: asset("service-doblez.jpg"),
+    imagePosition: "center center",
   },
 ];
 
@@ -97,17 +101,17 @@ export const projects: ProjectCard[] = [
   {
     title: "Cubiertas industriales",
     description: "Canalones, caballetes y remates para techos de bodegas, plantas y colegios.",
-    image: asset("project-01.webp"),
+    image: asset("project-cubiertas.jpg"),
   },
   {
     title: "Fachadas arquitectónicas",
     description: "Molduras y acabados prepintados que dan terminación a edificios, casas y locales.",
-    image: asset("project-02.webp"),
+    image: asset("project-fachadas.jpg"),
   },
   {
     title: "Mantenimiento de techos",
     description: "Reposición de canales, bajantes y remates en cubiertas existentes, sin parar la operación.",
-    image: asset("project-03.webp"),
+    image: asset("project-mantenimiento.jpg"),
   },
   {
     title: "Obra a medida",

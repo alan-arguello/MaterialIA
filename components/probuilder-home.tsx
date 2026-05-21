@@ -130,7 +130,11 @@ function Header() {
             transition={{ duration: 0.22 }}
           >
             {navItems.map((item) => (
-              <a key={item.href} href={item.href} onClick={() => setOpen(false)}>
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+              >
                 {item.label}
               </a>
             ))}
@@ -161,7 +165,13 @@ function ImageTile({
 }) {
   return (
     <div className={`image-tile ${className}`}>
-      <Image src={src} alt={alt} fill priority={priority} sizes="(max-width: 820px) 100vw, 50vw" />
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        priority={priority}
+        sizes="(max-width: 820px) 100vw, 50vw"
+      />
     </div>
   );
 }
@@ -189,8 +199,9 @@ function Hero() {
             <span className="hero-line">para tu obra en días</span>
           </h1>
           <p>
-            Cortamos y doblamos láminas de acero hasta de 8 metros: remates, molduras,
-            canalones y caballetes prepintados, listos para instalar sin reprocesos en obra.
+            Cortamos y doblamos láminas de acero hasta de 8 metros: remates,
+            molduras, canalones y caballetes prepintados, listos para instalar
+            sin reprocesos en obra.
           </p>
           <div className="hero-actions">
             <ButtonLink href="#contact">Cotizar mi obra</ButtonLink>
@@ -206,7 +217,12 @@ function Hero() {
           <div className="hero-logo-track">
             {clientLogos.map((client) => (
               <div className="hero-logo" key={client.name}>
-                <Image src={client.image} alt={client.name} width={180} height={64} />
+                <Image
+                  src={client.image}
+                  alt={client.name}
+                  width={180}
+                  height={64}
+                />
               </div>
             ))}
           </div>
@@ -221,7 +237,11 @@ function About() {
     <section className="section about" id="about">
       <div className="shell about-grid">
         <Reveal className="about-media">
-          <ImageTile src={asset("about.webp")} alt="Proceso de fabricacion metalica" className="about-image" />
+          <ImageTile
+            src={asset("steel.jpg")}
+            alt="Rollo de acero en almacen"
+            className="about-image"
+          />
           <Image
             className="about-mark"
             src={asset("about-mark.svg")}
@@ -233,15 +253,17 @@ function About() {
           />
         </Reveal>
         <Reveal className="about-copy" delay={0.1}>
-          <SectionEyebrow>Nosotros</SectionEyebrow>
+          <SectionEyebrow>Nuestra misión</SectionEyebrow>
           <h2>El acero exacto para cada esquina, fachada y cubierta.</h2>
           <p>
-            Trabajamos láminas de acero prepintado en remates, molduras, canalones y caballetes
-            hasta de 8 metros. Cada pieza se corta y dobla según los planos, fotos o croquis de tu obra.
+            Trabajamos láminas de acero prepintado en remates, molduras,
+            canalones y caballetes hasta de 8 metros. Cada pieza se corta y
+            dobla según los planos, fotos o croquis de tu obra.
           </p>
           <p>
-            Usamos IA en el proceso para cotizar al instante y aprovechar mejor cada lámina.
-            Entregamos en días lo que el mercado tarda semanas, al milímetro del plano.
+            Usamos IA en el proceso para cotizar al instante y aprovechar mejor
+            cada lámina. Entregamos en días lo que el mercado tarda semanas, al
+            milímetro del plano.
           </p>
           <div className="about-actions">
             <ButtonLink href="#contact">Cotizar mi obra</ButtonLink>
@@ -269,10 +291,14 @@ function Speciality() {
         </Reveal>
         <div className="feature-grid">
           {speciality.map((item, index) => (
-            <Reveal className="feature-card" key={item.title} delay={index * 0.06}>
-              <div className="feature-card__icon">
-                <Image src={item.icon} alt="" width={42} height={42} />
-              </div>
+            <Reveal
+              className="feature-card"
+              key={item.title}
+              delay={index * 0.06}
+            >
+              <span className="feature-card__marker">
+                {String(index + 1).padStart(2, "0")}
+              </span>
               <h3>{item.title}</h3>
               <p>{item.description}</p>
             </Reveal>
@@ -293,8 +319,16 @@ function WorkProcess() {
         </Reveal>
         <div className="process-grid">
           {processSteps.map((step, index) => (
-            <Reveal className="process-card" key={step.title} delay={index * 0.08}>
-              <ImageTile src={step.image} alt="Proceso de trabajo" className="process-card__image" />
+            <Reveal
+              className="process-card"
+              key={step.title}
+              delay={index * 0.08}
+            >
+              <ImageTile
+                src={step.image}
+                alt="Proceso de trabajo"
+                className="process-card__image"
+              />
               <div className="process-card__body">
                 <span>{step.number}</span>
                 <h3>{step.title}</h3>
@@ -324,8 +358,9 @@ function WhyChooseUs() {
             <div>
               <h3>Comparativo con el mercado</h3>
               <p>
-                En cubiertas y fachadas, perder un día corta el cronograma. Por eso fabricamos
-                a tu medida, prepintado y entregamos en días, no semanas.
+                En cubiertas y fachadas, perder un día corta el cronograma. Por
+                eso fabricamos a tu medida, prepintado y entregamos en días, no
+                semanas.
               </p>
             </div>
           </div>
@@ -352,12 +387,18 @@ function WhyChooseUs() {
             ))}
           </div>
           <div className="why-feature">
-            <Image src={asset("process-icon.svg")} alt="" width={50} height={50} />
+            <Image
+              src={asset("process-icon.svg")}
+              alt=""
+              width={50}
+              height={50}
+            />
             <div>
               <h3>Menos reprocesos, más obra avanzada</h3>
               <p>
-                Cada pieza llega lista para instalar, doblada al milímetro del plano. Sin recortes
-                en obra, sin uniones que filtren, sin sorpresas en la entrega.
+                Cada pieza llega lista para instalar, doblada al milímetro del
+                plano. Sin recortes en obra, sin uniones que filtren, sin
+                sorpresas en la entrega.
               </p>
             </div>
           </div>
@@ -382,17 +423,24 @@ function Services() {
         </Reveal>
         <div className="service-grid">
           {services.map((service, index) => (
-            <Reveal className="service-card" key={service.title} delay={index * 0.05}>
-              <Image src={service.image} alt={service.title} fill sizes="(max-width: 820px) 100vw, 25vw" />
+            <Reveal
+              className="service-card"
+              key={service.title}
+              delay={index * 0.05}
+            >
+              <Image
+                src={service.image}
+                alt={service.title}
+                fill
+                sizes="(max-width: 820px) 100vw, 25vw"
+                style={{ objectPosition: service.imagePosition }}
+              />
               <span className="service-card__shade" />
               <div className="service-card__content">
                 <div>
                   <h3>{service.title}</h3>
                   <p>{service.description}</p>
                 </div>
-                <span aria-hidden="true">
-                  <ArrowUpRight size={24} />
-                </span>
               </div>
             </Reveal>
           ))}
@@ -411,8 +459,8 @@ function Cta() {
             Cuéntanos qué necesitas para tu <span>obra</span>.
           </h2>
           <p>
-            Mándanos los planos, fotos o medidas. Respondemos por WhatsApp o correo con
-            precio y tiempo de entrega en minutos.
+            Mándanos los planos, fotos o medidas. Respondemos por WhatsApp o
+            correo con precio y tiempo de entrega en minutos.
           </p>
           <ButtonLink href="mailto:contacto@materialia.ai" variant="white">
             contacto@materialia.ai
@@ -431,11 +479,19 @@ function Cta() {
             </label>
             <label>
               <span>Empresa</span>
-              <input name="empresa" type="text" placeholder="Constructora o proyecto" />
+              <input
+                name="empresa"
+                type="text"
+                placeholder="Constructora o proyecto"
+              />
             </label>
             <label>
               <span>Telefono o correo</span>
-              <input name="contacto" type="text" placeholder="+57 000 000 0000" />
+              <input
+                name="contacto"
+                type="text"
+                placeholder="+57 000 000 0000"
+              />
             </label>
             <label>
               <span>Tipo de obra</span>
@@ -487,14 +543,22 @@ function Projects() {
         </Reveal>
         <div className="project-grid">
           {projects.map((project, index) => (
-            <Reveal className="project-card" key={project.title} delay={index * 0.05}>
-              <Image src={project.image} alt={project.title} fill sizes="(max-width: 820px) 100vw, 25vw" />
+            <Reveal
+              className="project-card"
+              key={project.title}
+              delay={index * 0.05}
+            >
+              <Image
+                src={project.image}
+                alt={project.title}
+                fill
+                sizes="(max-width: 820px) 100vw, 25vw"
+              />
               <div className="project-card__title">
                 <div>
                   <h3>{project.title}</h3>
                   <p>{project.description}</p>
                 </div>
-                <ArrowUpRight size={22} />
               </div>
             </Reveal>
           ))}
@@ -555,11 +619,19 @@ function BuyerProfiles() {
             <button
               type="button"
               aria-label="Perfil anterior"
-              onClick={() => setActive((index) => (index - 1 + buyerProfiles.length) % buyerProfiles.length)}
+              onClick={() =>
+                setActive(
+                  (index) =>
+                    (index - 1 + buyerProfiles.length) % buyerProfiles.length,
+                )
+              }
             >
               <ChevronLeft size={20} />
             </button>
-            <div className="testimonial-dots" aria-label="Paginacion de perfiles">
+            <div
+              className="testimonial-dots"
+              aria-label="Paginacion de perfiles"
+            >
               {buyerProfiles.map((item, index) => (
                 <button
                   type="button"
@@ -573,7 +645,9 @@ function BuyerProfiles() {
             <button
               type="button"
               aria-label="Perfil siguiente"
-              onClick={() => setActive((index) => (index + 1) % buyerProfiles.length)}
+              onClick={() =>
+                setActive((index) => (index + 1) % buyerProfiles.length)
+              }
             >
               <ChevronRight size={20} />
             </button>
@@ -591,8 +665,9 @@ function Footer() {
         <div className="footer-brand">
           <Logo />
           <p>
-            Fabricamos remates, molduras, canalones y caballetes de acero prepintado a la medida
-            exacta de tu obra. Entregas en días, no semanas.
+            Fabricamos remates, molduras, canalones y caballetes de acero
+            prepintado a la medida exacta de tu obra. Entregas en días, no
+            semanas.
           </p>
         </div>
         {footerGroups.map((group) => (
@@ -622,7 +697,9 @@ function Footer() {
         </div>
       </div>
       <div className="shell footer-bottom">
-        <span>Copyright © 2026 Material IA. Todos los derechos reservados.</span>
+        <span>
+          Copyright © 2026 Material IA. Todos los derechos reservados.
+        </span>
       </div>
     </footer>
   );
@@ -639,9 +716,8 @@ export function MaterialIAHome() {
         <WorkProcess />
         <WhyChooseUs />
         <Services />
-        <Cta />
         <Projects />
-        <BuyerProfiles />
+        <Cta />
       </main>
       <Footer />
     </>
