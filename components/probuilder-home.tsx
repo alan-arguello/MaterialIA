@@ -28,6 +28,20 @@ import {
 
 const asset = (name: string) => `/probuilder/${name}`;
 
+declare global {
+  interface Window {
+    fbq?: (...args: unknown[]) => void;
+  }
+}
+
+const createMetaEventId = () => {
+  if (globalThis.crypto?.randomUUID) {
+    return globalThis.crypto.randomUUID();
+  }
+
+  return `lead_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+};
+
 function Logo() {
   return (
     <a href="#home" className="logo" aria-label="Inicio Material IA">
@@ -539,6 +553,12 @@ function Cta() {
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+    const metaEventId = createMetaEventId();
+    const payload: Record<string, FormDataEntryValue | string> =
+      Object.fromEntries(formData);
+
+    payload.meta_event_id = metaEventId;
+    payload.event_source_url = window.location.href;
 
     setSubmitStatus("submitting");
     setSubmitMessage("");
@@ -549,10 +569,11 @@ function Cta() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(Object.fromEntries(formData)),
+        body: JSON.stringify(payload),
       });
       const data = (await response.json().catch(() => null)) as {
         error?: string;
+        metaEventId?: string;
       } | null;
 
       if (!response.ok) {
@@ -562,6 +583,9 @@ function Cta() {
       }
 
       form.reset();
+      window.fbq?.("track", "Lead", {}, {
+        eventID: data?.metaEventId ?? metaEventId,
+      });
       setSubmitStatus("success");
       setSubmitMessage(
         "Recibimos tu solicitud. Te contactaremos por WhatsApp o correo.",

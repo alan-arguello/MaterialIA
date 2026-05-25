@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
+import { sendMetaLeadEvent } from "@/lib/meta-conversions-api";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 
 type CotizacionBody = {
@@ -10,6 +11,8 @@ type CotizacionBody = {
   necesidad?: unknown;
   urgencia?: unknown;
   detalles?: unknown;
+  meta_event_id?: unknown;
+  event_source_url?: unknown;
 };
 
 const getText = (value: unknown) =>
@@ -17,7 +20,11 @@ const getText = (value: unknown) =>
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export async function POST(request: Request) {
+export const runtime = "nodejs";
+
+const createFallbackEventId = (leadId: string) => `lead_${leadId}`;
+
+export async function POST(request: NextRequest) {
   let body: CotizacionBody;
 
   try {
@@ -67,7 +74,11 @@ export async function POST(request: Request) {
 
   try {
     const supabase = createSupabaseServerClient();
-    const { error } = await supabase.from("cotizaciones").insert(cotizacion);
+    const { data, error } = await supabase
+      .from("cotizaciones")
+      .insert(cotizacion)
+      .select("id")
+      .single();
 
     if (error) {
       console.error("Supabase insert error:", error);
@@ -77,7 +88,30 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json({ ok: true }, { status: 201 });
+    if (!data?.id) {
+      console.error("Supabase insert did not return a lead id.");
+      return NextResponse.json(
+        { error: "No pudimos confirmar tu solicitud. Intenta de nuevo." },
+        { status: 500 },
+      );
+    }
+
+    const leadId = data.id as string;
+    const metaEventId =
+      getText(body.meta_event_id) || createFallbackEventId(leadId);
+
+    try {
+      await sendMetaLeadEvent({
+        request,
+        lead: cotizacion,
+        eventId: metaEventId,
+        eventSourceUrl: getText(body.event_source_url),
+      });
+    } catch (error) {
+      console.error("Meta CAPI Lead event error:", error);
+    }
+
+    return NextResponse.json({ ok: true, metaEventId }, { status: 201 });
   } catch (error) {
     console.error("Cotizacion API error:", error);
     return NextResponse.json(

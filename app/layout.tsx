@@ -25,7 +25,8 @@ const siteUrl = rawSiteUrl.startsWith("http")
 
 const siteDescription =
   "Remates, molduras, canalones y caballetes de acero prepintado hasta 8 m para cubiertas y fachadas. Cotiza con planos o fotos y recibe en días.";
-const metaPixelId = "27312585481765745";
+const metaPixelId =
+  process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "27312585481765745";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
