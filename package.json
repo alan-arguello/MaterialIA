@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint app components lib next.config.ts"
+    "lint": "eslint app components lib next.config.ts proxy.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.1",
