@@ -595,8 +595,8 @@ function Cta() {
           <div className="contact-panel__header">
             <h3>Cotiza con lo esencial</h3>
             <p>
-              Con tres datos podemos pre-calificar la solicitud: quién eres,
-              qué pieza necesitas y qué tan urgente es la obra.
+              Con tres datos podemos pre-calificar la solicitud: quién eres, qué
+              pieza necesitas y qué tan urgente es la obra.
             </p>
           </div>
           <form className="contact-form" onSubmit={handleSubmit}>
@@ -669,7 +669,10 @@ function Cta() {
             </label>
             <label className="contact-form__wide">
               <span>Urgencia</span>
-              <select name="urgencia" defaultValue="Estoy cotizando para planear">
+              <select
+                name="urgencia"
+                defaultValue="Estoy cotizando para planear"
+              >
                 <option>Esta semana</option>
                 <option>En 1 a 2 semanas</option>
                 <option>Estoy cotizando para planear</option>
@@ -898,7 +901,6 @@ export function MaterialIAHome() {
       <main>
         <Hero />
         <About />
-        <Founder />
         <Speciality />
         <WorkProcess />
         <WhyChooseUs />
