@@ -19,7 +19,7 @@ type SendMetaLeadEventInput = {
   eventSourceUrl?: string;
 };
 
-const fallbackPixelId = "27312585481765745";
+const fallbackPixelId = "2082954105977832";
 const defaultGraphApiVersion = "v24.0";
 
 const getEnv = (name: string) => {
