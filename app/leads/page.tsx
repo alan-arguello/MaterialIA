@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import {
+  ArrowUpRight,
   Building2,
   CalendarClock,
   Mail,
@@ -163,13 +164,19 @@ export default async function LeadsPage({ searchParams }: LeadsPageProps) {
     <main className="leads-page">
       <div className="leads-shell">
         <header className="leads-header">
-          <div>
+          <div className="leads-header__copy">
             <p className="leads-eyebrow">Panel privado</p>
             <h1>Leads de cotizaciones</h1>
             <p>
-              Últimas solicitudes guardadas en Supabase. Esta página está
-              marcada como no indexable y protegida por acceso básico.
+              Solicitudes guardadas desde la página. Esta vista se mantiene
+              fuera de indexación y está pensada para revisar, filtrar y
+              contactar rápido.
             </p>
+            <div className="leads-header__badges" aria-label="Estado del panel">
+              <span>No indexable</span>
+              <span>Supabase</span>
+              <span>Últimas 200</span>
+            </div>
           </div>
           <form className="leads-search" action="/leads">
             <Search size={18} aria-hidden="true" />
@@ -211,89 +218,157 @@ export default async function LeadsPage({ searchParams }: LeadsPageProps) {
             </div>
 
             {filteredLeads.length ? (
-              <div className="leads-table-wrap">
-                <table className="leads-table">
-                  <thead>
-                    <tr>
-                      <th>Contacto</th>
-                      <th>Empresa</th>
-                      <th>Necesidad</th>
-                      <th>Urgencia</th>
-                      <th>Fecha</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredLeads.map((lead) => {
-                      const whatsappHref = formatWhatsAppHref(lead.whatsapp);
+              <>
+                <div className="leads-list" aria-label="Solicitudes recientes">
+                  {filteredLeads.map((lead) => {
+                    const whatsappHref = formatWhatsAppHref(lead.whatsapp);
 
-                      return (
-                        <tr key={lead.id}>
-                          <td>
-                            <div className="leads-contact">
-                              <strong>{lead.nombre_persona}</strong>
-                              <span>{lead.tipo_cliente}</span>
-                              <a href={`mailto:${lead.email}`}>
-                                <Mail size={14} aria-hidden="true" />
-                                {lead.email}
-                              </a>
-                              {whatsappHref ? (
-                                <a
-                                  href={whatsappHref}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                >
-                                  <Phone size={14} aria-hidden="true" />
-                                  {lead.whatsapp}
-                                </a>
-                              ) : (
-                                <span>{lead.whatsapp}</span>
-                              )}
-                            </div>
-                          </td>
-                          <td>
-                            <div className="leads-company">
-                              <Building2 size={16} aria-hidden="true" />
-                              <span>{lead.empresa}</span>
-                            </div>
-                          </td>
-                          <td>
-                            <div className="leads-need">
-                              <strong>{lead.necesidad}</strong>
-                              <span>{lead.detalles}</span>
-                            </div>
-                          </td>
-                          <td>
-                            <span className={getUrgencyClass(lead.urgencia)}>
-                              {lead.urgencia}
+                    return (
+                      <article className="lead-card" key={lead.id}>
+                        <div className="lead-card__head">
+                          <div>
+                            <span>{lead.tipo_cliente}</span>
+                            <h3>{lead.nombre_persona}</h3>
+                            <p>{lead.empresa}</p>
+                          </div>
+                          <span className={getUrgencyClass(lead.urgencia)}>
+                            {lead.urgencia}
+                          </span>
+                        </div>
+                        <div className="lead-card__need">
+                          <strong>{lead.necesidad}</strong>
+                          <p>{lead.detalles || "Sin detalles adicionales."}</p>
+                        </div>
+                        <div className="lead-card__meta">
+                          <span>
+                            <CalendarClock size={14} aria-hidden="true" />
+                            {formatDate(lead.created_at)}
+                          </span>
+                          <a href={`mailto:${lead.email}`}>
+                            <Mail size={14} aria-hidden="true" />
+                            {lead.email}
+                          </a>
+                          {whatsappHref ? (
+                            <a
+                              href={whatsappHref}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              <Phone size={14} aria-hidden="true" />
+                              {lead.whatsapp}
+                            </a>
+                          ) : (
+                            <span>
+                              <Phone size={14} aria-hidden="true" />
+                              {lead.whatsapp}
                             </span>
-                          </td>
-                          <td>
-                            <span className="leads-date">
-                              <CalendarClock size={15} aria-hidden="true" />
-                              {formatDate(lead.created_at)}
-                            </span>
-                          </td>
-                          <td>
-                            <div className="leads-actions">
-                              <a href={`mailto:${lead.email}`}>Correo</a>
-                              {whatsappHref ? (
-                                <a
-                                  href={whatsappHref}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                >
-                                  WhatsApp
+                          )}
+                        </div>
+                        <div className="lead-card__actions">
+                          <a href={`mailto:${lead.email}`}>
+                            Correo
+                            <ArrowUpRight size={14} aria-hidden="true" />
+                          </a>
+                          {whatsappHref ? (
+                            <a
+                              href={whatsappHref}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              WhatsApp
+                              <ArrowUpRight size={14} aria-hidden="true" />
+                            </a>
+                          ) : null}
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+
+                <div className="leads-table-wrap">
+                  <table className="leads-table">
+                    <thead>
+                      <tr>
+                        <th>Contacto</th>
+                        <th>Empresa</th>
+                        <th>Necesidad</th>
+                        <th>Urgencia</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredLeads.map((lead) => {
+                        const whatsappHref = formatWhatsAppHref(lead.whatsapp);
+
+                        return (
+                          <tr key={lead.id}>
+                            <td>
+                              <div className="leads-contact">
+                                <strong>{lead.nombre_persona}</strong>
+                                <span>{lead.tipo_cliente}</span>
+                                <a href={`mailto:${lead.email}`}>
+                                  <Mail size={14} aria-hidden="true" />
+                                  {lead.email}
                                 </a>
-                              ) : null}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+                                {whatsappHref ? (
+                                  <a
+                                    href={whatsappHref}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    <Phone size={14} aria-hidden="true" />
+                                    {lead.whatsapp}
+                                  </a>
+                                ) : (
+                                  <span>{lead.whatsapp}</span>
+                                )}
+                              </div>
+                            </td>
+                            <td>
+                              <div className="leads-company">
+                                <Building2 size={16} aria-hidden="true" />
+                                <span>{lead.empresa}</span>
+                              </div>
+                            </td>
+                            <td>
+                              <div className="leads-need">
+                                <strong>{lead.necesidad}</strong>
+                                <span>{lead.detalles}</span>
+                              </div>
+                            </td>
+                            <td>
+                              <span className={getUrgencyClass(lead.urgencia)}>
+                                {lead.urgencia}
+                              </span>
+                            </td>
+                            <td>
+                              <span className="leads-date">
+                                <CalendarClock size={15} aria-hidden="true" />
+                                {formatDate(lead.created_at)}
+                              </span>
+                            </td>
+                            <td>
+                              <div className="leads-actions">
+                                <a href={`mailto:${lead.email}`}>Correo</a>
+                                {whatsappHref ? (
+                                  <a
+                                    href={whatsappHref}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    WhatsApp
+                                  </a>
+                                ) : null}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </>
             ) : (
               <div className="leads-empty">
                 <UserRound size={28} aria-hidden="true" />

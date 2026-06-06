@@ -1,11 +1,13 @@
 import { MaterialIAHome } from "@/components/probuilder-home";
+import { materialIaEmail, materialIaWhatsAppDisplay } from "@/lib/contact";
 
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Material IA",
   url: "https://materialia.ai/",
-  email: "contacto@materialia.ai",
+  email: materialIaEmail,
+  telephone: materialIaWhatsAppDisplay,
   logo: "https://materialia.ai/probuilder/favicon.png",
   image: "https://materialia.ai/probuilder/og.jpg",
   description:

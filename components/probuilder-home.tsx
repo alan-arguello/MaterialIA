@@ -4,15 +4,33 @@ import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   ArrowUpRight,
+  Calculator,
   ChevronLeft,
   ChevronRight,
   Mail,
   MapPin,
   Menu,
+  MessageCircle,
   Phone,
+  Plus,
+  Trash2,
   X,
 } from "lucide-react";
-import { type FormEvent, useEffect, useState } from "react";
+import { type FormEvent, useEffect, useMemo, useState } from "react";
+import {
+  calculateSteelPrequote,
+  parseDevelopmentExpression,
+  parsePositiveNumber,
+  type SteelPrequotePieceResult,
+} from "@/lib/steel-prequote-calculator";
+import {
+  quoteColorOptions,
+  quotePieceTypes,
+  steelGaugeOptions,
+  type QuoteColorValue,
+  type QuotePieceTypeValue,
+  type SteelGauge,
+} from "@/lib/steel-prequote-config";
 import {
   buyerProfiles,
   clientLogos,
@@ -25,8 +43,18 @@ import {
   speciality,
   stats,
 } from "@/lib/probuilder-data";
+import {
+  materialIaEmail,
+  materialIaWhatsAppDigits,
+  materialIaWhatsAppDisplay,
+  materialIaWhatsAppHref,
+} from "@/lib/contact";
+import { MATERIALIA_LEAD_STORAGE_KEY } from "@/lib/quote-flow";
 
 const asset = (name: string) => `/probuilder/${name}`;
+const whatsappNumber = materialIaWhatsAppDigits;
+const quoteDisclaimer =
+  "Este precio es estimado y no optimiza el aprovechamiento de lámina. Si nos contactas con el despiece completo, podemos revisar si tu pedido usa mejor la hoja y darte un mejor precio.";
 
 declare global {
   interface Window {
@@ -542,6 +570,508 @@ function Services() {
   );
 }
 
+type QuotePieceDraft = {
+  id: string;
+  pieceType: QuotePieceTypeValue;
+  developmentInput: string;
+  gauge: SteelGauge;
+  color: QuoteColorValue;
+  customColor: string;
+  linearMetersInput: string;
+};
+
+type ParsedQuotePiece = QuotePieceDraft & {
+  developmentMm: number | null;
+  linearMeters: number | null;
+  pieceTypeLabel: string;
+  colorLabel: string;
+};
+
+type ValidParsedQuotePiece = ParsedQuotePiece & {
+  developmentMm: number;
+  linearMeters: number;
+};
+
+type QuotedQuotePiece = ValidParsedQuotePiece & {
+  billableDevelopmentMm: SteelPrequotePieceResult["billableDevelopmentMm"];
+  unitPrice: SteelPrequotePieceResult["unitPrice"];
+  pieceTotal: SteelPrequotePieceResult["pieceTotal"];
+  requiresContact: SteelPrequotePieceResult["requiresContact"];
+  contactReason: SteelPrequotePieceResult["contactReason"];
+};
+
+const currencyFormatter = new Intl.NumberFormat("es-CO", {
+  maximumFractionDigits: 0,
+});
+const measurementFormatter = new Intl.NumberFormat("es-CO", {
+  maximumFractionDigits: 2,
+});
+
+const formatCop = (value: number) =>
+  `COP ${currencyFormatter.format(Math.round(value))}`;
+const formatMeasurement = (value: number) => measurementFormatter.format(value);
+const getPieceTypeLabel = (value: QuotePieceTypeValue) =>
+  quotePieceTypes.find((type) => type.value === value)?.label ?? value;
+const getColorLabel = (piece: QuotePieceDraft) =>
+  piece.color === "Otro" ? piece.customColor.trim() || "Otro" : piece.color;
+
+export type SavedLead = {
+  leadId: string | null;
+  metaEventId: string;
+  nombrePersona: string;
+  empresa: string;
+  whatsapp: string;
+  email: string;
+  tipoCliente: string;
+  necesidad: string;
+};
+
+const createQuotePieceDraft = (id: string): QuotePieceDraft => ({
+  id,
+  pieceType: "molduras-remates",
+  developmentInput: "450",
+  gauge: "18",
+  color: "Galvanizado",
+  customColor: "",
+  linearMetersInput: "1",
+});
+
+const isValidParsedQuotePiece = (
+  piece: ParsedQuotePiece,
+): piece is ValidParsedQuotePiece =>
+  piece.developmentMm !== null && piece.linearMeters !== null;
+
+function buildWhatsAppQuoteMessage({
+  lead,
+  pieces,
+  subtotal,
+  vat,
+  total,
+}: {
+  lead: SavedLead;
+  pieces: QuotedQuotePiece[];
+  subtotal: number;
+  vat: number;
+  total: number;
+}) {
+  const pieceSummary = pieces
+    .map((piece, index) => {
+      const billableWidth = piece.billableDevelopmentMm
+        ? `${formatMeasurement(piece.billableDevelopmentMm)} mm`
+        : "Revisar por WhatsApp";
+      const unitPrice = piece.unitPrice
+        ? `${formatCop(piece.unitPrice)}/m`
+        : "Cotizar por WhatsApp";
+      const pieceTotal = piece.pieceTotal
+        ? formatCop(piece.pieceTotal)
+        : "Cotizar por WhatsApp";
+
+      return [
+        `Pieza ${index + 1}: ${piece.pieceTypeLabel}`,
+        `Desarrollo: ${formatMeasurement(piece.developmentMm)} mm`,
+        `Ancho útil cobrado: ${billableWidth}`,
+        `Calibre: ${piece.gauge}`,
+        `Color/acabado: ${piece.colorLabel}`,
+        `Metros lineales: ${formatMeasurement(piece.linearMeters)} m`,
+        `Precio unitario estimado: ${unitPrice}`,
+        `Total pieza estimado: ${pieceTotal}`,
+        piece.contactReason ? `Nota: ${piece.contactReason}` : "",
+        piece.pieceType === "doblez-medida"
+          ? "Adjunto plano, foto o croquis por WhatsApp."
+          : "",
+      ]
+        .filter(Boolean)
+        .join("\n");
+    })
+    .join("\n\n");
+
+  return [
+    "Hola Material IA, quiero continuar con esta pre-cotización:",
+    "",
+    lead.leadId ? `Solicitud guardada: ${lead.leadId}` : "",
+    `Contacto: ${lead.nombrePersona}`,
+    `Empresa: ${lead.empresa}`,
+    `WhatsApp: ${lead.whatsapp}`,
+    `Correo: ${lead.email}`,
+    `Tipo de cliente: ${lead.tipoCliente}`,
+    `Necesidad inicial: ${lead.necesidad}`,
+    "",
+    pieceSummary,
+    "",
+    `Subtotal estimado: ${formatCop(subtotal)}`,
+    `IVA 19%: ${formatCop(vat)}`,
+    `Total estimado: ${formatCop(total)}`,
+    "",
+    quoteDisclaimer,
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+export function SteelPrequoteCalculator({ lead }: { lead: SavedLead }) {
+  const [pieces, setPieces] = useState<QuotePieceDraft[]>([
+    createQuotePieceDraft("quote-piece-1"),
+  ]);
+
+  const updatePiece = <Field extends keyof QuotePieceDraft>(
+    id: string,
+    field: Field,
+    value: QuotePieceDraft[Field],
+  ) => {
+    setPieces((currentPieces) =>
+      currentPieces.map((piece) =>
+        piece.id === id ? { ...piece, [field]: value } : piece,
+      ),
+    );
+  };
+
+  const addPiece = () => {
+    setPieces((currentPieces) => [
+      ...currentPieces,
+      createQuotePieceDraft(`quote-piece-${Date.now()}`),
+    ]);
+  };
+
+  const removePiece = (id: string) => {
+    setPieces((currentPieces) =>
+      currentPieces.length === 1
+        ? currentPieces
+        : currentPieces.filter((piece) => piece.id !== id),
+    );
+  };
+
+  const quoteState = useMemo(() => {
+    const parsedPieces: ParsedQuotePiece[] = pieces.map((piece) => ({
+      ...piece,
+      developmentMm: parseDevelopmentExpression(piece.developmentInput),
+      linearMeters: parsePositiveNumber(piece.linearMetersInput),
+      pieceTypeLabel: getPieceTypeLabel(piece.pieceType),
+      colorLabel: getColorLabel(piece),
+    }));
+    const validPieces = parsedPieces.filter(isValidParsedQuotePiece);
+    const totals = calculateSteelPrequote(
+      validPieces.map(({ developmentMm, gauge, linearMeters }) => ({
+        developmentMm,
+        gauge,
+        linearMeters,
+      })),
+    );
+    const quotedPieces: QuotedQuotePiece[] = validPieces.map((piece, index) => ({
+      ...piece,
+      billableDevelopmentMm: totals.pieces[index]?.billableDevelopmentMm ?? null,
+      unitPrice: totals.pieces[index]?.unitPrice ?? null,
+      pieceTotal: totals.pieces[index]?.pieceTotal ?? null,
+      requiresContact: totals.pieces[index]?.requiresContact ?? true,
+      contactReason: totals.pieces[index]?.contactReason ?? null,
+    }));
+
+    return {
+      parsedPieces,
+      quotedPieces,
+      subtotal: totals.subtotal,
+      vat: totals.vat,
+      total: totals.total,
+      requiresContact: quotedPieces.some((piece) => piece.requiresContact),
+    };
+  }, [pieces]);
+
+  const whatsappHref =
+    whatsappNumber && quoteState.quotedPieces.length
+      ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+          buildWhatsAppQuoteMessage({
+            lead,
+            pieces: quoteState.quotedPieces,
+            subtotal: quoteState.subtotal,
+            vat: quoteState.vat,
+            total: quoteState.total,
+          }),
+        )}`
+      : "";
+
+  return (
+    <section className="section quote-section" id="cotizador">
+      <div className="shell quote-shell">
+        <Reveal className="quote-copy">
+          <SectionEyebrow>Paso 2</SectionEyebrow>
+          <h2>Ahora arma tu pre-cotización.</h2>
+          <p>
+            Ya guardamos tus datos, {lead.nombrePersona}. Elige la pieza más
+            parecida, agrega calibre, desarrollo y metros. Al final te llevamos
+            a WhatsApp con el resumen listo.
+          </p>
+          <div className="quote-lead-card" aria-label="Datos guardados">
+            <span>Datos guardados</span>
+            <strong>{lead.empresa}</strong>
+            <small>{lead.email} · {lead.whatsapp}</small>
+          </div>
+        </Reveal>
+        <Reveal className="quote-tool" delay={0.08}>
+          <div className="quote-editor">
+            <div className="quote-editor__head">
+              <span aria-hidden="true">
+                <Calculator size={20} />
+              </span>
+              <div>
+                <h3>Calcula tu precio estimado</h3>
+                <p>Agrega dos o tres piezas si tu pedido usa varios desarrollos.</p>
+              </div>
+            </div>
+            <div className="quote-pieces">
+              {quoteState.parsedPieces.map((piece, index) => (
+                <div className="quote-piece" key={piece.id}>
+                  <div className="quote-piece__head">
+                    <span>Pieza {index + 1}</span>
+                    {pieces.length > 1 ? (
+                      <button
+                        type="button"
+                        aria-label={`Eliminar pieza ${index + 1}`}
+                        onClick={() => removePiece(piece.id)}
+                      >
+                        <Trash2 size={17} />
+                      </button>
+                    ) : null}
+                  </div>
+                  <div className="quote-piece-types" role="radiogroup">
+                    {quotePieceTypes.map((type) => (
+                      <button
+                        className="quote-type-card"
+                        type="button"
+                        aria-checked={piece.pieceType === type.value}
+                        role="radio"
+                        key={type.value}
+                        onClick={() =>
+                          updatePiece(piece.id, "pieceType", type.value)
+                        }
+                      >
+                        <span className="quote-type-card__media">
+                          <Image
+                            src={type.image}
+                            alt=""
+                            fill
+                            sizes="(max-width: 700px) 100vw, 180px"
+                          />
+                        </span>
+                        <strong>{type.label}</strong>
+                        <small>{type.description}</small>
+                      </button>
+                    ))}
+                  </div>
+                  {piece.pieceType === "doblez-medida" ? (
+                    <p className="quote-piece-note">
+                      Continúa por WhatsApp con plano, foto o croquis. No tienes
+                      que subir archivo aquí.
+                    </p>
+                  ) : null}
+                  <div className="quote-fields">
+                    <label className="quote-field">
+                      <span>Calibre</span>
+                      <select
+                        value={piece.gauge}
+                        onChange={(event) =>
+                          updatePiece(
+                            piece.id,
+                            "gauge",
+                            event.target.value as SteelGauge,
+                          )
+                        }
+                      >
+                        {steelGaugeOptions.map((gauge) => (
+                          <option value={gauge} key={gauge}>
+                            {gauge}
+                          </option>
+                        ))}
+                      </select>
+                      {piece.gauge === "26" || piece.gauge === "28" ? (
+                        <small>Este calibre se confirma por WhatsApp.</small>
+                      ) : null}
+                    </label>
+                    <label className="quote-field">
+                      <span>Desarrollo en mm</span>
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        value={piece.developmentInput}
+                        placeholder="150 + 195 + 100 + 40"
+                        onChange={(event) =>
+                          updatePiece(
+                            piece.id,
+                            "developmentInput",
+                            event.target.value,
+                          )
+                        }
+                      />
+                      {piece.developmentMm !== null ? (
+                        <small>
+                          Total desarrollo:{" "}
+                          {formatMeasurement(piece.developmentMm)} mm
+                        </small>
+                      ) : (
+                        <small className="quote-field__error">
+                          Usa un total directo o tramos separados por +.
+                        </small>
+                      )}
+                    </label>
+                    <label className="quote-field">
+                      <span>Color</span>
+                      <select
+                        value={piece.color}
+                        onChange={(event) =>
+                          updatePiece(
+                            piece.id,
+                            "color",
+                            event.target.value as QuoteColorValue,
+                          )
+                        }
+                      >
+                        {quoteColorOptions.map((color) => (
+                          <option value={color} key={color}>
+                            {color}
+                          </option>
+                        ))}
+                      </select>
+                      {piece.color === "Otro" ? (
+                        <input
+                          type="text"
+                          value={piece.customColor}
+                          placeholder="Escribe el color"
+                          onChange={(event) =>
+                            updatePiece(
+                              piece.id,
+                              "customColor",
+                              event.target.value,
+                            )
+                          }
+                        />
+                      ) : null}
+                    </label>
+                    <label className="quote-field">
+                      <span>Metros lineales totales</span>
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        value={piece.linearMetersInput}
+                        placeholder="8"
+                        onChange={(event) =>
+                          updatePiece(
+                            piece.id,
+                            "linearMetersInput",
+                            event.target.value,
+                          )
+                        }
+                      />
+                      {piece.linearMeters === null ? (
+                        <small className="quote-field__error">
+                          Ingresa metros mayores a cero.
+                        </small>
+                      ) : null}
+                    </label>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button className="quote-add" type="button" onClick={addPiece}>
+              <Plus size={18} />
+              Agregar otra pieza
+            </button>
+          </div>
+          <aside className="quote-summary" aria-label="Resumen de cotización">
+            <div className="quote-summary__head">
+              <span>
+                {quoteState.requiresContact
+                  ? "Revisión recomendada"
+                  : "Precio unitario estimado"}
+              </span>
+              <strong>
+                {quoteState.quotedPieces[0]?.unitPrice
+                  ? `${formatCop(quoteState.quotedPieces[0].unitPrice)}/m`
+                  : "Cotizar por WhatsApp"}
+              </strong>
+            </div>
+            <div className="quote-summary__pieces">
+              {quoteState.quotedPieces.length ? (
+                quoteState.quotedPieces.map((piece, index) => (
+                  <div className="quote-summary__piece" key={piece.id}>
+                    <span>
+                      {index + 1}. {piece.pieceTypeLabel}
+                    </span>
+                    <strong>
+                      {piece.pieceTotal
+                        ? formatCop(piece.pieceTotal)
+                        : "WhatsApp"}
+                    </strong>
+                    <small>
+                      {piece.unitPrice
+                        ? `${formatCop(piece.unitPrice)}/m`
+                        : "Precio por confirmar"}{" "}
+                      · Desarrollo {formatMeasurement(piece.developmentMm)} mm ·{" "}
+                      {piece.billableDevelopmentMm
+                        ? `cobra ${formatMeasurement(piece.billableDevelopmentMm)} mm`
+                        : "requiere revisión"}{" "}
+                      · Cal. {piece.gauge} · {piece.colorLabel} ·{" "}
+                      {formatMeasurement(piece.linearMeters)} m
+                    </small>
+                    {piece.contactReason ? (
+                      <small className="quote-summary__warning">
+                        {piece.contactReason}. Continúa por WhatsApp para
+                        confirmar precio.
+                      </small>
+                    ) : null}
+                    {piece.pieceType === "doblez-medida" ? (
+                      <small className="quote-summary__warning">
+                        Adjunta plano, foto o croquis al continuar por WhatsApp.
+                      </small>
+                    ) : null}
+                    {piece.billableDevelopmentMm &&
+                    piece.billableDevelopmentMm !== piece.developmentMm ? (
+                      <small className="quote-summary__warning">
+                        El cálculo cobra ancho útil de{" "}
+                        {formatMeasurement(piece.billableDevelopmentMm)} mm.
+                      </small>
+                    ) : null}
+                  </div>
+                ))
+              ) : (
+                <p>Completa al menos una pieza para ver la pre-cotización.</p>
+              )}
+            </div>
+            <dl className="quote-totals">
+              <div>
+                <dt>Subtotal</dt>
+                <dd>{formatCop(quoteState.subtotal)}</dd>
+              </div>
+              <div>
+                <dt>IVA 19%</dt>
+                <dd>{formatCop(quoteState.vat)}</dd>
+              </div>
+              <div>
+                <dt>Total estimado</dt>
+                <dd>{formatCop(quoteState.total)}</dd>
+              </div>
+            </dl>
+            <p className="quote-disclaimer">{quoteDisclaimer}</p>
+            {whatsappHref ? (
+              <a
+                className="quote-whatsapp"
+                href={whatsappHref}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <MessageCircle size={19} />
+                Continuar por WhatsApp
+              </a>
+            ) : (
+              <button className="quote-whatsapp" type="button" disabled>
+                <MessageCircle size={19} />
+                Continuar por WhatsApp
+              </button>
+            )}
+          </aside>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
 function Cta() {
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "submitting" | "success" | "error"
@@ -556,6 +1086,14 @@ function Cta() {
     const metaEventId = createMetaEventId();
     const payload: Record<string, FormDataEntryValue | string> =
       Object.fromEntries(formData);
+    const savedLeadFromForm = {
+      nombrePersona: String(payload.nombre_persona ?? "").trim(),
+      empresa: String(payload.empresa ?? "").trim(),
+      whatsapp: String(payload.whatsapp ?? "").trim(),
+      email: String(payload.email ?? "").trim(),
+      tipoCliente: String(payload.tipo_cliente ?? "").trim(),
+      necesidad: String(payload.necesidad ?? "").trim(),
+    };
 
     payload.meta_event_id = metaEventId;
     payload.event_source_url = window.location.href;
@@ -573,6 +1111,7 @@ function Cta() {
       });
       const data = (await response.json().catch(() => null)) as {
         error?: string;
+        leadId?: string;
         metaEventId?: string;
       } | null;
 
@@ -582,14 +1121,33 @@ function Cta() {
         );
       }
 
+      const savedLead: SavedLead = {
+        ...savedLeadFromForm,
+        leadId: data?.leadId ?? null,
+        metaEventId: data?.metaEventId ?? metaEventId,
+      };
+
       form.reset();
+      try {
+        window.sessionStorage.setItem(
+          MATERIALIA_LEAD_STORAGE_KEY,
+          JSON.stringify(savedLead),
+        );
+      } catch {
+        throw new Error(
+          "Guardamos tu solicitud, pero no pudimos abrir el pre-cotizador. Intenta de nuevo en esta misma ventana.",
+        );
+      }
       window.fbq?.("track", "Lead", {}, {
         eventID: data?.metaEventId ?? metaEventId,
       });
       setSubmitStatus("success");
       setSubmitMessage(
-        "Recibimos tu solicitud. Te contactaremos por WhatsApp o correo.",
+        "Datos guardados. Te llevamos al pre-cotizador.",
       );
+      window.setTimeout(() => {
+        window.location.assign("/cotizador");
+      }, 260);
     } catch (error) {
       setSubmitStatus("error");
       setSubmitMessage(
@@ -604,23 +1162,21 @@ function Cta() {
     <section className="section cta-section" id="contact">
       <div className="shell cta-shell">
         <Reveal className="cta-copy">
+          <SectionEyebrow>Solicita cotización</SectionEyebrow>
           <h2>
-            Cuéntanos qué necesitas para tu <span>obra</span>.
+            Completa tus datos y abre el pre-cotizador.
           </h2>
           <p>
-            Dinos qué pieza necesitas, dónde va instalada y qué tan urgente es.
-            Con fotos, medidas aproximadas o un croquis podemos empezar.
+            Guardamos tu solicitud primero. Después te llevamos a una pantalla
+            para estimar las piezas y enviar el resumen por WhatsApp.
           </p>
-          <ButtonLink href="mailto:contacto@materialia.ai" variant="white">
-            contacto@materialia.ai
-          </ButtonLink>
         </Reveal>
         <Reveal className="contact-panel" delay={0.1}>
           <div className="contact-panel__header">
-            <h3>Cotiza con lo esencial</h3>
+            <h3>Paso 1: datos de contacto</h3>
             <p>
-              Con tres datos podemos pre-calificar la solicitud: quién eres, qué
-              pieza necesitas y qué tan urgente es la obra.
+              Guardamos tu contacto antes del cálculo para que el equipo pueda
+              dar seguimiento si el precio necesita optimización.
             </p>
           </div>
           <form className="contact-form" onSubmit={handleSubmit}>
@@ -649,7 +1205,7 @@ function Cta() {
               <input
                 name="whatsapp"
                 type="tel"
-                placeholder="+52 55 1234 5678"
+                placeholder={materialIaWhatsAppDisplay}
                 autoComplete="tel"
                 inputMode="tel"
                 required
@@ -684,11 +1240,9 @@ function Cta() {
                 <option value="" disabled>
                   Selecciona una opción
                 </option>
-                <option>Canalones, caballetes o remates</option>
-                <option>Fachada o acabado arquitectónico</option>
-                <option>Mantenimiento o filtración</option>
-                <option>Marco, puerta o pieza especial</option>
-                <option>Impermeabilización u otro</option>
+                <option>Canal</option>
+                <option>Molduras/Remates</option>
+                <option>Doblez a medida/Adjunta</option>
               </select>
             </label>
             <label className="contact-form__wide">
@@ -722,18 +1276,18 @@ function Cta() {
             <button type="submit" disabled={submitStatus === "submitting"}>
               {submitStatus === "submitting"
                 ? "Enviando..."
-                : "Solicitar cotización"}
+                : "Guardar datos y abrir pre-cotizador"}
             </button>
           </form>
           <div className="contact-methods">
-            <a href="mailto:contacto@materialia.ai">
-              <Mail size={18} />
-              contacto@materialia.ai
-            </a>
-            <span>
+            <a href={materialIaWhatsAppHref} target="_blank" rel="noreferrer">
               <Phone size={18} />
-              Respuesta por WhatsApp o correo
-            </span>
+              Hablar por WhatsApp
+            </a>
+            <a href={`mailto:${materialIaEmail}`}>
+              <Mail size={18} />
+              {materialIaEmail}
+            </a>
           </div>
         </Reveal>
       </div>
@@ -895,14 +1449,14 @@ function Footer() {
         ))}
         <div className="footer-contact">
           <h3>Contacto</h3>
-          <a href="mailto:contacto@materialia.ai">
+          <a href={`mailto:${materialIaEmail}`}>
             <Mail size={18} />
-            contacto@materialia.ai
+            {materialIaEmail}
           </a>
-          <span>
+          <a href={materialIaWhatsAppHref} target="_blank" rel="noreferrer">
             <Phone size={18} />
-            WhatsApp o correo al solicitar cotización
-          </span>
+            {materialIaWhatsAppDisplay}
+          </a>
           <span>
             <MapPin size={18} />
             Colombia

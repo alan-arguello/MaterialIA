@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
       console.error("Meta CAPI Lead event error:", error);
     }
 
-    return NextResponse.json({ ok: true, metaEventId }, { status: 201 });
+    return NextResponse.json({ ok: true, leadId, metaEventId }, { status: 201 });
   } catch (error) {
     console.error("Cotizacion API error:", error);
     return NextResponse.json(

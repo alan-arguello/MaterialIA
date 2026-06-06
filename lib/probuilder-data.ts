@@ -16,6 +16,7 @@ export const navItems: NavItem[] = [
   { label: "Inicio", href: "#home" },
   { label: "Nosotros", href: "#about" },
   { label: "Productos", href: "#services" },
+  { label: "Cotizar", href: "#contact" },
   { label: "Mercado", href: "#projects" },
 ];
 
