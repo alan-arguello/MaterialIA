@@ -23,6 +23,21 @@ const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const runtime = "nodejs";
 
 const createFallbackEventId = (leadId: string) => `lead_${leadId}`;
+const formatQuoteCode = ({
+  createdAt,
+  folio,
+}: {
+  createdAt: string | null;
+  folio: number;
+}) => {
+  const isoDate = createdAt?.match(/^\d{4}-\d{2}-\d{2}/)?.[0];
+  const datePart = (isoDate ?? new Date().toISOString().slice(0, 10)).replaceAll(
+    "-",
+    "",
+  );
+
+  return `${datePart}-CO-${String(folio).padStart(6, "0")}`;
+};
 
 export async function POST(request: NextRequest) {
   let body: CotizacionBody;
@@ -77,7 +92,7 @@ export async function POST(request: NextRequest) {
     const { data, error } = await supabase
       .from("cotizaciones")
       .insert(cotizacion)
-      .select("id")
+      .select("id,cotizacion_folio,created_at")
       .single();
 
     if (error) {
@@ -97,6 +112,20 @@ export async function POST(request: NextRequest) {
     }
 
     const leadId = data.id as string;
+    const quoteFolio = Number(data.cotizacion_folio);
+
+    if (!Number.isFinite(quoteFolio) || quoteFolio < 1) {
+      console.error("Supabase insert did not return a valid quote folio.");
+      return NextResponse.json(
+        { error: "No pudimos confirmar el consecutivo. Intenta de nuevo." },
+        { status: 500 },
+      );
+    }
+
+    const quoteCode = formatQuoteCode({
+      createdAt: typeof data.created_at === "string" ? data.created_at : null,
+      folio: quoteFolio,
+    });
     const metaEventId =
       getText(body.meta_event_id) || createFallbackEventId(leadId);
 
@@ -111,7 +140,10 @@ export async function POST(request: NextRequest) {
       console.error("Meta CAPI Lead event error:", error);
     }
 
-    return NextResponse.json({ ok: true, leadId, metaEventId }, { status: 201 });
+    return NextResponse.json(
+      { ok: true, leadId, quoteCode, metaEventId },
+      { status: 201 },
+    );
   } catch (error) {
     console.error("Cotizacion API error:", error);
     return NextResponse.json(

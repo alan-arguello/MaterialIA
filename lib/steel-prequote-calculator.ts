@@ -1,5 +1,5 @@
 import {
-  STEEL_PREQUOTE_DISCOUNT_MULTIPLIER,
+  STEEL_COIL_WIDTH_MM,
   STEEL_PREQUOTE_VAT_RATE,
   steelBillableWidthsMm,
   steelCoilPricesByGauge,
@@ -93,9 +93,8 @@ export function calculateSteelPiecePrequote({
     };
   }
 
-  const coilConsumption = billableDevelopmentMm / 1200;
-  const listMeterPrice = gaugeMeterPrice * coilConsumption;
-  const unitPrice = listMeterPrice * STEEL_PREQUOTE_DISCOUNT_MULTIPLIER;
+  const coilConsumption = billableDevelopmentMm / STEEL_COIL_WIDTH_MM;
+  const unitPrice = gaugeMeterPrice * coilConsumption;
   const pieceTotal = unitPrice * linearMeters;
 
   return {

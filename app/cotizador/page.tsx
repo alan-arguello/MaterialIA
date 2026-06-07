@@ -2,14 +2,12 @@
 
 import Link from "next/link";
 import { ArrowLeft, MessageCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import {
   SteelPrequoteCalculator,
   type SavedLead,
 } from "@/components/probuilder-home";
-import {
-  materialIaWhatsAppHref,
-} from "@/lib/contact";
+import { materialIaWhatsAppHref } from "@/lib/contact";
 import { MATERIALIA_LEAD_STORAGE_KEY } from "@/lib/quote-flow";
 
 const isSavedLead = (value: unknown): value is SavedLead => {
@@ -21,19 +19,30 @@ const isSavedLead = (value: unknown): value is SavedLead => {
 
   return Boolean(
     lead.metaEventId &&
+      lead.quoteCode &&
       lead.nombrePersona &&
       lead.empresa &&
       lead.whatsapp &&
       lead.email &&
       lead.tipoCliente &&
-      lead.necesidad,
+      lead.necesidad &&
+      lead.urgencia &&
+      lead.detalles,
   );
 };
 
-const readSavedLead = () => {
+const subscribeToSavedLead = () => () => undefined;
+const getServerSavedLeadSnapshot = () => null;
+const getSavedLeadSnapshot = () => {
   try {
-    const rawLead = window.sessionStorage.getItem(MATERIALIA_LEAD_STORAGE_KEY);
+    return window.sessionStorage.getItem(MATERIALIA_LEAD_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+};
 
+const parseSavedLead = (rawLead: string | null) => {
+  try {
     if (!rawLead) {
       return null;
     }
@@ -47,13 +56,12 @@ const readSavedLead = () => {
 };
 
 export default function CotizadorPage() {
-  const [lead, setLead] = useState<SavedLead | null>(null);
-  const [hasLoadedLead, setHasLoadedLead] = useState(false);
-
-  useEffect(() => {
-    setLead(readSavedLead());
-    setHasLoadedLead(true);
-  }, []);
+  const rawLead = useSyncExternalStore(
+    subscribeToSavedLead,
+    getSavedLeadSnapshot,
+    getServerSavedLeadSnapshot,
+  );
+  const lead = useMemo(() => parseSavedLead(rawLead), [rawLead]);
 
   return (
     <main className="quote-page">
@@ -73,11 +81,9 @@ export default function CotizadorPage() {
         </a>
       </nav>
 
-      {hasLoadedLead && lead ? (
-        <SteelPrequoteCalculator lead={lead} />
-      ) : null}
+      {lead ? <SteelPrequoteCalculator lead={lead} /> : null}
 
-      {hasLoadedLead && !lead ? (
+      {!lead ? (
         <section className="quote-page__empty">
           <span>Material IA</span>
           <h1>Primero guarda tus datos.</h1>

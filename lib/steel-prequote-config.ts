@@ -1,17 +1,17 @@
 export const STEEL_COIL_WIDTH_MM = 1200;
-export const STEEL_PREQUOTE_DISCOUNT_MULTIPLIER = 0.9;
 export const STEEL_PREQUOTE_VAT_RATE = 0.19;
-export const steelBillableWidthsMm = [400, 600, 1200] as const;
+export const steelBillableWidthsMm = [400, 600, 800, 1200] as const;
 
 export const steelGaugeOptions = ["18", "20", "22", "24", "26", "28"] as const;
 
 export type SteelGauge = (typeof steelGaugeOptions)[number];
 
 export const steelCoilPricesByGauge: Partial<Record<SteelGauge, number>> = {
-  "18": 103941.18,
-  "20": 95188.24,
-  "22": 81358.59,
-  "24": 79566.67,
+  "18": 95000,
+  "20": 85000,
+  "22": 72000,
+  "24": 60000,
+  "26": 52000,
 } as const;
 
 export const quotePieceTypes = [

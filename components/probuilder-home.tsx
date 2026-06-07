@@ -54,7 +54,7 @@ import { MATERIALIA_LEAD_STORAGE_KEY } from "@/lib/quote-flow";
 const asset = (name: string) => `/probuilder/${name}`;
 const whatsappNumber = materialIaWhatsAppDigits;
 const quoteDisclaimer =
-  "Este precio es estimado y no optimiza el aprovechamiento de lámina. Si nos contactas con el despiece completo, podemos revisar si tu pedido usa mejor la hoja y darte un mejor precio.";
+  "Este precio es estimado y no optimiza el aprovechamiento de lámina. Al contactarnos con el despiece completo, podemos revisar si tu pedido usa mejor la hoja y darte un precio optimizado.";
 
 declare global {
   interface Window {
@@ -609,6 +609,8 @@ const measurementFormatter = new Intl.NumberFormat("es-CO", {
 
 const formatCop = (value: number) =>
   `COP ${currencyFormatter.format(Math.round(value))}`;
+const formatWhatsappCop = (value: number, suffix = "") =>
+  `*${formatCop(value)}${suffix}*`;
 const formatMeasurement = (value: number) => measurementFormatter.format(value);
 const getPieceTypeLabel = (value: QuotePieceTypeValue) =>
   quotePieceTypes.find((type) => type.value === value)?.label ?? value;
@@ -617,6 +619,7 @@ const getColorLabel = (piece: QuotePieceDraft) =>
 
 export type SavedLead = {
   leadId: string | null;
+  quoteCode: string | null;
   metaEventId: string;
   nombrePersona: string;
   empresa: string;
@@ -624,6 +627,8 @@ export type SavedLead = {
   email: string;
   tipoCliente: string;
   necesidad: string;
+  urgencia: string;
+  detalles: string;
 };
 
 const createQuotePieceDraft = (id: string): QuotePieceDraft => ({
@@ -659,11 +664,11 @@ function buildWhatsAppQuoteMessage({
       const billableWidth = piece.billableDevelopmentMm
         ? `${formatMeasurement(piece.billableDevelopmentMm)} mm`
         : "Revisar por WhatsApp";
-      const unitPrice = piece.unitPrice
-        ? `${formatCop(piece.unitPrice)}/m`
+      const unitPrice = piece.unitPrice !== null
+        ? formatWhatsappCop(piece.unitPrice, "/m")
         : "Cotizar por WhatsApp";
-      const pieceTotal = piece.pieceTotal
-        ? formatCop(piece.pieceTotal)
+      const pieceTotal = piece.pieceTotal !== null
+        ? formatWhatsappCop(piece.pieceTotal)
         : "Cotizar por WhatsApp";
 
       return [
@@ -688,13 +693,17 @@ function buildWhatsAppQuoteMessage({
   return [
     "Hola Material IA, quiero continuar con esta pre-cotización:",
     "",
-    lead.leadId ? `Solicitud guardada: ${lead.leadId}` : "",
+    `Código de solicitud: ${lead.quoteCode ?? "Pendiente de confirmar"}`,
     `Contacto: ${lead.nombrePersona}`,
     `Empresa: ${lead.empresa}`,
     `WhatsApp: ${lead.whatsapp}`,
     `Correo: ${lead.email}`,
     `Tipo de cliente: ${lead.tipoCliente}`,
+    `Urgencia: ${lead.urgencia}`,
     `Necesidad inicial: ${lead.necesidad}`,
+    `Detalles iniciales: ${lead.detalles}`,
+    "",
+    "Los siguientes precios no incluyen IVA.",
     "",
     pieceSummary,
     "",
@@ -703,9 +712,12 @@ function buildWhatsAppQuoteMessage({
     `Total estimado: ${formatCop(total)}`,
     "",
     quoteDisclaimer,
-  ]
-    .filter(Boolean)
-    .join("\n");
+    "",
+    "¿Quieres agendar una llamada?",
+    "Opciones:",
+    "- Llámame dentro de los próximos 5 minutos.",
+    "- Agendar una llamada telefónica.",
+  ].join("\n");
 }
 
 export function SteelPrequoteCalculator({ lead }: { lead: SavedLead }) {
@@ -802,7 +814,10 @@ export function SteelPrequoteCalculator({ lead }: { lead: SavedLead }) {
           <div className="quote-lead-card" aria-label="Datos guardados">
             <span>Datos guardados</span>
             <strong>{lead.empresa}</strong>
-            <small>{lead.email} · {lead.whatsapp}</small>
+            <small>
+              {lead.quoteCode ?? "Solicitud guardada"} · {lead.email} ·{" "}
+              {lead.whatsapp}
+            </small>
           </div>
         </Reveal>
         <Reveal className="quote-tool" delay={0.08}>
@@ -881,7 +896,7 @@ export function SteelPrequoteCalculator({ lead }: { lead: SavedLead }) {
                           </option>
                         ))}
                       </select>
-                      {piece.gauge === "26" || piece.gauge === "28" ? (
+                      {piece.gauge === "28" ? (
                         <small>Este calibre se confirma por WhatsApp.</small>
                       ) : null}
                     </label>
@@ -1093,6 +1108,8 @@ function Cta() {
       email: String(payload.email ?? "").trim(),
       tipoCliente: String(payload.tipo_cliente ?? "").trim(),
       necesidad: String(payload.necesidad ?? "").trim(),
+      urgencia: String(payload.urgencia ?? "").trim(),
+      detalles: String(payload.detalles ?? "").trim(),
     };
 
     payload.meta_event_id = metaEventId;
@@ -1112,6 +1129,7 @@ function Cta() {
       const data = (await response.json().catch(() => null)) as {
         error?: string;
         leadId?: string;
+        quoteCode?: string;
         metaEventId?: string;
       } | null;
 
@@ -1124,6 +1142,7 @@ function Cta() {
       const savedLead: SavedLead = {
         ...savedLeadFromForm,
         leadId: data?.leadId ?? null,
+        quoteCode: data?.quoteCode ?? null,
         metaEventId: data?.metaEventId ?? metaEventId,
       };
 
