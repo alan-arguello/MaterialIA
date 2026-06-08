@@ -24,6 +24,7 @@ import {
   type SteelPrequotePieceResult,
 } from "@/lib/steel-prequote-calculator";
 import {
+  STEEL_PREQUOTE_VAT_RATE,
   quoteColorOptions,
   quotePieceTypes,
   steelGaugeOptions,
@@ -629,6 +630,9 @@ export type SavedLead = {
   necesidad: string;
   urgencia: string;
   detalles: string;
+  affiliateCode: string | null;
+  affiliateName: string | null;
+  discountPercent: number;
 };
 
 const createQuotePieceDraft = (id: string): QuotePieceDraft => ({
@@ -650,15 +654,20 @@ function buildWhatsAppQuoteMessage({
   lead,
   pieces,
   subtotal,
+  discountAmount,
+  discountedSubtotal,
   vat,
   total,
 }: {
   lead: SavedLead;
   pieces: QuotedQuotePiece[];
   subtotal: number;
+  discountAmount: number;
+  discountedSubtotal: number;
   vat: number;
   total: number;
 }) {
+  const discountPercent = Number(lead.discountPercent || 0);
   const pieceSummary = pieces
     .map((piece, index) => {
       const billableWidth = piece.billableDevelopmentMm
@@ -704,12 +713,21 @@ function buildWhatsAppQuoteMessage({
     `Urgencia: ${lead.urgencia}`,
     `Necesidad inicial: ${lead.necesidad}`,
     `Detalles iniciales: ${lead.detalles}`,
+    lead.affiliateCode && discountPercent
+      ? `Código de descuento: ${lead.affiliateCode} (${lead.affiliateName ?? "Afiliado"} · ${formatMeasurement(discountPercent)}%)`
+      : "",
     "",
     "Los siguientes precios no incluyen IVA.",
     "",
     pieceSummary,
     "",
     `Subtotal estimado: ${formatCop(subtotal)}`,
+    discountAmount > 0
+      ? `Descuento ${formatMeasurement(discountPercent)}%: -${formatCop(discountAmount)}`
+      : "",
+    discountAmount > 0
+      ? `Subtotal con descuento: ${formatCop(discountedSubtotal)}`
+      : "",
     `IVA 19%: ${formatCop(vat)}`,
     `Total estimado: ${formatCop(total)}`,
     "",
@@ -781,16 +799,23 @@ export function SteelPrequoteCalculator({ lead }: { lead: SavedLead }) {
         contactReason: totals.pieces[index]?.contactReason ?? null,
       }),
     );
+    const discountPercent = Number(lead.discountPercent || 0);
+    const discountAmount =
+      discountPercent > 0 ? totals.subtotal * (discountPercent / 100) : 0;
+    const discountedSubtotal = Math.max(totals.subtotal - discountAmount, 0);
+    const vat = discountedSubtotal * STEEL_PREQUOTE_VAT_RATE;
 
     return {
       parsedPieces,
       quotedPieces,
       subtotal: totals.subtotal,
-      vat: totals.vat,
-      total: totals.total,
+      discountAmount,
+      discountedSubtotal,
+      vat,
+      total: discountedSubtotal + vat,
       requiresContact: quotedPieces.some((piece) => piece.requiresContact),
     };
-  }, [pieces]);
+  }, [lead.discountPercent, pieces]);
 
   const whatsappHref =
     whatsappNumber && quoteState.quotedPieces.length
@@ -799,6 +824,8 @@ export function SteelPrequoteCalculator({ lead }: { lead: SavedLead }) {
             lead,
             pieces: quoteState.quotedPieces,
             subtotal: quoteState.subtotal,
+            discountAmount: quoteState.discountAmount,
+            discountedSubtotal: quoteState.discountedSubtotal,
             vat: quoteState.vat,
             total: quoteState.total,
           }),
@@ -823,6 +850,12 @@ export function SteelPrequoteCalculator({ lead }: { lead: SavedLead }) {
               {lead.quoteCode ?? "Solicitud guardada"} · {lead.email} ·{" "}
               {lead.whatsapp}
             </small>
+            {lead.affiliateCode && lead.discountPercent ? (
+              <small>
+                Código {lead.affiliateCode} ·{" "}
+                {formatMeasurement(lead.discountPercent)}% de descuento
+              </small>
+            ) : null}
           </div>
         </Reveal>
         <Reveal className="quote-tool" delay={0.08}>
@@ -1061,6 +1094,20 @@ export function SteelPrequoteCalculator({ lead }: { lead: SavedLead }) {
                 <dt>Subtotal</dt>
                 <dd>{formatCop(quoteState.subtotal)}</dd>
               </div>
+              {quoteState.discountAmount > 0 ? (
+                <>
+                  <div>
+                    <dt>
+                      Descuento {formatMeasurement(lead.discountPercent)}%
+                    </dt>
+                    <dd>-{formatCop(quoteState.discountAmount)}</dd>
+                  </div>
+                  <div>
+                    <dt>Subtotal con descuento</dt>
+                    <dd>{formatCop(quoteState.discountedSubtotal)}</dd>
+                  </div>
+                </>
+              ) : null}
               <div>
                 <dt>IVA 19%</dt>
                 <dd>{formatCop(quoteState.vat)}</dd>
@@ -1138,6 +1185,9 @@ function Cta() {
         leadId?: string;
         quoteCode?: string;
         metaEventId?: string;
+        affiliateCode?: string | null;
+        affiliateName?: string | null;
+        discountPercent?: number;
       } | null;
 
       if (!response.ok) {
@@ -1151,6 +1201,9 @@ function Cta() {
         leadId: data?.leadId ?? null,
         quoteCode: data?.quoteCode ?? null,
         metaEventId: data?.metaEventId ?? metaEventId,
+        affiliateCode: data?.affiliateCode ?? null,
+        affiliateName: data?.affiliateName ?? null,
+        discountPercent: data?.discountPercent ?? 0,
       };
 
       form.reset();
@@ -1282,6 +1335,16 @@ function Cta() {
                 <option>En 1 a 2 semanas</option>
                 <option>Estoy cotizando para planear</option>
               </select>
+            </label>
+            <label className="contact-form__wide">
+              <span>Código de descuento</span>
+              <input
+                name="codigo_afiliado"
+                type="text"
+                placeholder="Opcional, ej. ARQUO-10"
+                autoCapitalize="characters"
+                pattern="[A-Za-z0-9-]{3,32}"
+              />
             </label>
             <label className="contact-form__wide">
               <span>Detalles para cotizar</span>

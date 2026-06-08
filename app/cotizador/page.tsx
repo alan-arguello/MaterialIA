@@ -27,7 +27,8 @@ const isSavedLead = (value: unknown): value is SavedLead => {
       lead.tipoCliente &&
       lead.necesidad &&
       lead.urgencia &&
-      lead.detalles,
+      lead.detalles &&
+      typeof lead.discountPercent === "number",
   );
 };
 
