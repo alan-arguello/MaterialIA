@@ -664,12 +664,14 @@ function buildWhatsAppQuoteMessage({
       const billableWidth = piece.billableDevelopmentMm
         ? `${formatMeasurement(piece.billableDevelopmentMm)} mm`
         : "Revisar por WhatsApp";
-      const unitPrice = piece.unitPrice !== null
-        ? formatWhatsappCop(piece.unitPrice, "/m")
-        : "Cotizar por WhatsApp";
-      const pieceTotal = piece.pieceTotal !== null
-        ? formatWhatsappCop(piece.pieceTotal)
-        : "Cotizar por WhatsApp";
+      const unitPrice =
+        piece.unitPrice !== null
+          ? formatWhatsappCop(piece.unitPrice, "/m")
+          : "Cotizar por WhatsApp";
+      const pieceTotal =
+        piece.pieceTotal !== null
+          ? formatWhatsappCop(piece.pieceTotal)
+          : "Cotizar por WhatsApp";
 
       return [
         `Pieza ${index + 1}: ${piece.pieceTypeLabel}`,
@@ -679,7 +681,7 @@ function buildWhatsAppQuoteMessage({
         `Color/acabado: ${piece.colorLabel}`,
         `Metros lineales: ${formatMeasurement(piece.linearMeters)} m`,
         `Precio unitario estimado: ${unitPrice}`,
-        `Total pieza estimado: ${pieceTotal}`,
+        `Estimado: ${pieceTotal}`,
         piece.contactReason ? `Nota: ${piece.contactReason}` : "",
         piece.pieceType === "doblez-medida"
           ? "Adjunto plano, foto o croquis por WhatsApp."
@@ -768,14 +770,17 @@ export function SteelPrequoteCalculator({ lead }: { lead: SavedLead }) {
         linearMeters,
       })),
     );
-    const quotedPieces: QuotedQuotePiece[] = validPieces.map((piece, index) => ({
-      ...piece,
-      billableDevelopmentMm: totals.pieces[index]?.billableDevelopmentMm ?? null,
-      unitPrice: totals.pieces[index]?.unitPrice ?? null,
-      pieceTotal: totals.pieces[index]?.pieceTotal ?? null,
-      requiresContact: totals.pieces[index]?.requiresContact ?? true,
-      contactReason: totals.pieces[index]?.contactReason ?? null,
-    }));
+    const quotedPieces: QuotedQuotePiece[] = validPieces.map(
+      (piece, index) => ({
+        ...piece,
+        billableDevelopmentMm:
+          totals.pieces[index]?.billableDevelopmentMm ?? null,
+        unitPrice: totals.pieces[index]?.unitPrice ?? null,
+        pieceTotal: totals.pieces[index]?.pieceTotal ?? null,
+        requiresContact: totals.pieces[index]?.requiresContact ?? true,
+        contactReason: totals.pieces[index]?.contactReason ?? null,
+      }),
+    );
 
     return {
       parsedPieces,
@@ -828,7 +833,9 @@ export function SteelPrequoteCalculator({ lead }: { lead: SavedLead }) {
               </span>
               <div>
                 <h3>Calcula tu precio estimado</h3>
-                <p>Agrega dos o tres piezas si tu pedido usa varios desarrollos.</p>
+                <p>
+                  Agrega dos o tres piezas si tu pedido usa varios desarrollos.
+                </p>
               </div>
             </div>
             <div className="quote-pieces">
@@ -1157,13 +1164,16 @@ function Cta() {
           "Guardamos tu solicitud, pero no pudimos abrir el pre-cotizador. Intenta de nuevo en esta misma ventana.",
         );
       }
-      window.fbq?.("track", "Lead", {}, {
-        eventID: data?.metaEventId ?? metaEventId,
-      });
-      setSubmitStatus("success");
-      setSubmitMessage(
-        "Datos guardados. Te llevamos al pre-cotizador.",
+      window.fbq?.(
+        "track",
+        "Lead",
+        {},
+        {
+          eventID: data?.metaEventId ?? metaEventId,
+        },
       );
+      setSubmitStatus("success");
+      setSubmitMessage("Datos guardados. Te llevamos al pre-cotizador.");
       window.setTimeout(() => {
         window.location.assign("/cotizador");
       }, 260);
@@ -1182,9 +1192,7 @@ function Cta() {
       <div className="shell cta-shell">
         <Reveal className="cta-copy">
           <SectionEyebrow>Solicita cotización</SectionEyebrow>
-          <h2>
-            Completa tus datos y abre el pre-cotizador.
-          </h2>
+          <h2>Completa tus datos y abre el pre-cotizador.</h2>
           <p>
             Guardamos tu solicitud primero. Después te llevamos a una pantalla
             para estimar las piezas y enviar el resumen por WhatsApp.
